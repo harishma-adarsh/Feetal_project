@@ -19,6 +19,9 @@ urlpatterns = [
     path('dashboard/admin/', views.dashboard_admin, name='dashboard_admin'),
     path('dashboard/admin-dashboard.html', views.dashboard_admin),
     path('dashboard/admin/add-doctor/', views.admin_add_doctor, name='admin_add_doctor'),
+    path("dashboard/admin/add-patient/", views.admin_add_patient, name="admin_add_patient"),
+    path("dashboard/admin/add-appointment/", views.admin_add_appointment, name="admin_add_appointment"),
+
     path('dashboard/admin/users/<int:user_id>/edit/', views.admin_user_edit, name='admin_user_edit'),
     path('dashboard/admin/users/<int:user_id>/delete/', views.admin_user_delete, name='admin_user_delete'),
     path('dashboard/admin/doctors/<int:doctor_id>/edit/', views.admin_doctor_edit, name='admin_doctor_edit'),
@@ -47,5 +50,9 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('forgot-password/done/', views.forgot_password_done, name='forgot_password_done'),
     path('reset-password/<uidb64>/<token>/', views.reset_password_confirm, name='reset_password_confirm'),
+
+    path("dashboard/admin/doctor/<int:doctor_id>/schedule/", views.admin_doctor_schedule, name="admin_doctor_schedule"),
+    path("dashboard/admin/schedule/add/", views.admin_add_schedule_slot, name="admin_add_schedule_slot"),
+    path("dashboard/admin/schedule/remove/", views.admin_remove_schedule_slot, name="admin_remove_schedule_slot"),
 
 ]

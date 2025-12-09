@@ -371,11 +371,14 @@ function saveToHistory(type, files, results) {
     let history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
     history.push({ type, date: new Date().toISOString(), results });
     localStorage.setItem("analysisHistory", JSON.stringify(history));
+    
+
     loadReportHistory();
 }
 
 function loadReportHistory() {
     let history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
+     localStorage.removeItem("analysisHistory");
     const container = document.getElementById("reportsHistory");
     container.innerHTML = "";
 

@@ -108,3 +108,25 @@ class MLReport(models.Model):
     def __str__(self):
         return f"{self.patient_name} - {self.analysis_type}"
 
+class DoctorSchedule(models.Model):
+    DAYS = [
+        ('monday', 'Monday'),
+        ('tuesday', 'Tuesday'),
+        ('wednesday', 'Wednesday'),
+        ('thursday', 'Thursday'),
+        ('friday', 'Friday'),
+        ('saturday', 'Saturday'),
+        ('sunday', 'Sunday'),
+    ]
+
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name="schedule")
+    day = models.CharField(max_length=20, choices=DAYS)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    class Meta:
+        unique_together = ('doctor', 'day', 'start_time', 'end_time')
+        ordering = ['day', 'start_time']
+
+    def __str__(self):
+        return f"{self.doctor.user.get_full_name() or self.doctor.user.username} - {self.day} {self.start_time}-{self.end_time}"

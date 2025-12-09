@@ -15,6 +15,7 @@
             border-radius: 16px;
             padding: 25px;
             animation: fadeIn 0.25s ease-in-out;
+            
         }
 
         .doctor-form .form-row {
@@ -388,6 +389,64 @@
             font-size: 0.9rem;
             margin: 0;
         }
+/* Base state: modal is hidden */
+#addDoctorModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+
+    display: none;              /* hidden by default */
+    justify-content: center;    /* we will show as flex later */
+    /* align-items: flex-start;    push a bit higher */
+    align-items: center;
+    padding-top: 0;
+          /* distance from top */
+}
+
+/* When openModal adds this class, the modal becomes visible */
+#addDoctorModal.is-open {
+    display: flex;
+}
+
+/* Popup card (white box) */
+#addDoctorModal .doctor-modal {
+    max-width: 600px;
+    border-radius: 16px;
+    padding: 25px;
+    background: #fff;
+}
+
+#addPatientModal {
+    display: none !important;
+}
+
+#addPatientModal.is-open {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding-top: 0; /* adjust popup height */
+}
+#addAppointmentModal.is-open {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding-top: 0;
+    z-index: 9999;
+}
+
+
+     
     </style>
 </head>
 <body>
@@ -574,8 +633,8 @@
                     <div class="card-header">
                         <h2>Doctor Management</h2>
 
-                        <!-- Add Doctor Modal -->
-                            <div id="addDoctorModal" class="modal">
+                  <!-- Add Doctor Modal -->
+<div id="addDoctorModal" class="modal">
     <div class="modal-content doctor-modal">
         <div class="modal-header">
             <h2>Add New Doctor</h2>
@@ -601,7 +660,7 @@
                 </div>
                 <div class="form-group">
                     <label>Specialization</label>
-                   <select id="docSpecialization" required>
+                    <select id="docSpecialization" required>
                         <option value="">Select specialization</option>
                         <option value="obgyn">Obstetrics & Gynecology</option>
                         <option value="mfm">Maternal-Fetal Medicine</option>
@@ -609,7 +668,6 @@
                         <option value="pediatrics">Pediatrics</option>
                         <option value="prenatal_counselling">Prenatal Counselling</option>
                     </select>
-
                 </div>
             </div>
 
@@ -626,7 +684,6 @@
         </form>
     </div>
 </div>
-
 
                         <button class="btn-primary" onclick="openModal('addDoctorModal')">
                             <i class="fas fa-plus"></i> Add Doctor
@@ -661,7 +718,8 @@
                                                 {% if doctor.is_active %}Deactivate{% else %}Activate{% endif %}
                                             </button>
                                         </form>
-                                        <a class="btn btn-primary" href="{% url 'feetal_app:admin_doctor_schedule' doctor.id %}">Schedule</a>
+                                       <a class="btn btn-primary" href="{% url 'feetal_app:admin_doctor_schedule' doctor.id %}">Schedule</a>
+
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -680,7 +738,49 @@
                 <div class="content-card" data-aos="fade-up">
                     <div class="card-header">
                         <h2>Patient Management</h2>
-                        <button class="btn-primary">
+
+                        <!-- Add Patient Modal -->
+<div id="addPatientModal" class="modal">
+    <div class="modal-content doctor-modal">
+        <div class="modal-header">
+            <h2>Add New Patient</h2>
+            <span class="close" onclick="closeModal('addPatientModal')">&times;</span>
+        </div>
+
+        <form class="doctor-form" onsubmit="submitPatient(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input id="patName" required placeholder="Aparna K">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input id="patEmail" type="email" required placeholder="patient@example.com">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full">
+                    <label>Phone</label>
+                    <input id="patPhone" required placeholder="9876543210">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full">
+                    <label>Create Password</label>
+                    <input id="patPassword" type="password" required placeholder="Minimum 6 characters">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary full-width">
+                <i class="fas fa-user-plus"></i> Create Patient
+            </button>
+        </form>
+    </div>
+</div>
+
+                        <button class="btn-primary" onclick="openModal('addPatientModal')">
                             <i class="fas fa-plus"></i> Add Patient
                         </button>
                     </div>
@@ -723,7 +823,79 @@
                 <div class="content-card" data-aos="fade-up">
                     <div class="card-header">
                         <h2>Appointment Management</h2>
-                        <button class="btn-primary">
+<!-- ADD APPOINTMENT MODAL -->
+<div id="addAppointmentModal" class="modal">
+    <div class="modal-content doctor-modal">
+        <div class="modal-header">
+            <h2>Add Appointment</h2>
+            <span class="close" onclick="closeModal('addAppointmentModal')">&times;</span>
+        </div>
+
+        <form class="doctor-form" onsubmit="submitAppointment(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Patient</label>
+                   <select id="appPatient" required>
+                        <option value="">Select Patient</option>
+                        {% for p in patient_rows %}
+                        <option value="{{ p.id }}">{{ p.name }} ({{ p.phone }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Doctor</label>
+                    <select id="appDoctor" required>
+                        <option value="">Select Doctor</option>
+                        {% for d in doctor_rows %}
+                        <option value="{{ d.id }}">{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="appDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Time</label>
+                    <input type="time" id="appTime" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full">
+                    <label>Reason</label>
+                    <select id="appReason" required>
+                        <option value="">Select reason</option>
+                        <option value="routine-checkup">Routine Checkup</option>
+                        <option value="prenatal-care">Prenatal Care</option>
+                        <option value="ultrasound">Ultrasound Scan</option>
+                        <option value="consultation">Medical Consultation</option>
+                        <option value="follow-up">Follow-up Visit</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full">
+                    <label>Notes (optional)</label>
+                    <input id="appNotes" placeholder="Additional notes for doctor">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary full-width">
+                <i class="fas fa-calendar-plus"></i> Create Appointment
+            </button>
+        </form>
+    </div>
+</div>
+
+
+                        <button class="btn-primary" onclick="openModal('addAppointmentModal')">
                             <i class="fas fa-plus"></i> Add Appointment
                         </button>
                     </div>
@@ -1016,13 +1188,21 @@
         }
 
       
-           function openModal(id) {
-    document.getElementById(id).style.display = "block";
+         function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.add("is-open");   // show modal
+    }
 }
 
 function closeModal(id) {
-    document.getElementById(id).style.display = "none";
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove("is-open"); // hide modal
+    }
 }
+
+
 
 function getCookie(name) {
     let cookieValue = null;
@@ -1069,6 +1249,66 @@ async function submitDoctor(event) {
     }
 }
 
+async function submitPatient(event) {
+    event.preventDefault();
+
+    const payload = {
+        name: document.getElementById("patName").value.trim(),
+        email: document.getElementById("patEmail").value.trim(),
+        phone: document.getElementById("patPhone").value.trim(),
+        password: document.getElementById("patPassword").value.trim(),
+    };
+
+    const response = await fetch("/dashboard/admin/add-patient/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+        alert("Patient added successfully!");
+        closeModal("addPatientModal");
+        location.reload();
+    } else {
+        alert(data.message);
+    }
+}
+
+async function submitAppointment(event) {
+    event.preventDefault();
+
+    const payload = {
+        patient_id: document.getElementById("appPatient").value,
+        doctor_id: document.getElementById("appDoctor").value,
+        date: document.getElementById("appDate").value,
+        time: document.getElementById("appTime").value,
+        reason: document.getElementById("appReason").value,
+        notes: document.getElementById("appNotes").value,
+    };
+
+    const response = await fetch("/dashboard/admin/add-appointment/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+        alert("Appointment created successfully!");
+        closeModal("addAppointmentModal");
+        location.reload();
+    } else {
+        alert(data.message);
+    }
+}
 
 
     </script>

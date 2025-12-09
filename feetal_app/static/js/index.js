@@ -42,7 +42,7 @@ function initNavbarScrollEffect() {
 // Mock user data for demonstration
 const mockUsers = [
     {
-        email: 'demo@medicare.com',
+        email: 'demo@fetoscope.com',
         password: 'demo123',
         name: 'Demo User',
         phone: '+1 (555) 123-4567'
@@ -54,7 +54,7 @@ const mockUsers = [
         phone: '+1 (555) 987-6543'
     },
     {
-        email: 'doctor@medicare.com',
+        email: 'doctor@fetoscope.com',
         password: 'doctor123',
         name: 'Dr. Sarah Johnson',
         phone: '+1 (555) 456-7890'
@@ -661,7 +661,7 @@ function validatePhone(phone) {
 
 // Auto-fill demo credentials
 function fillDemoCredentials() {
-    document.getElementById('loginEmail').value = 'demo@medicare.com';
+    document.getElementById('loginEmail').value = 'demo@fetoscope.com';
     document.getElementById('loginPassword').value = 'demo123';
 }
 

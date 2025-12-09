@@ -1,4 +1,6 @@
 from datetime import timedelta, date, time
+from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
 import io
 import json
 import traceback
@@ -37,7 +39,7 @@ from .forms import (
     AdminUserUpdateForm,
     DoctorAdminForm,
 )
-from .models import Doctor, Patient, Appointment, AnalysisReport, MLReport
+from .models import Doctor, Patient, Appointment, AnalysisReport, MLReport,DoctorSchedule
 from .ml_service import (
     predict_maternal_health,
     predict_preterm_delivery,
@@ -235,7 +237,102 @@ def admin_add_doctor(request):
 
     return JsonResponse({"success": True, "message": "Doctor created successfully"})
 
+@require_http_methods(["POST"])
+@login_required
+def admin_add_patient(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "Invalid method"})
 
+    data = json.loads(request.body)
+    name = data.get("name")
+    email = data.get("email")
+    phone = data.get("phone")
+    password = data.get("password")
+
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({"success": False, "message": "Email already registered"})
+
+    user = User.objects.create_user(username=email, email=email, password=password, first_name=name)
+    patient = Patient.objects.create(user=user, phone=phone)
+
+    return JsonResponse({"success": True})
+@require_http_methods(["POST"])
+@login_required
+@csrf_exempt
+def admin_add_appointment(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        patient = Patient.objects.get(id=data["patient_id"])
+        doctor = Doctor.objects.get(id=data["doctor_id"])
+
+        Appointment.objects.create(
+            patient=patient,
+            doctor=doctor,
+            patient_name=patient.user.get_full_name(),
+            patient_email=patient.user.email,
+            patient_phone=patient.phone,
+            appointment_date=data["date"],
+            appointment_time=data["time"],
+            reason=data["reason"],
+            notes=data.get("notes", "")
+        )
+
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
+    
+@login_required
+def admin_doctor_schedule(request, doctor_id):
+    if not request.user.is_superuser:
+        messages.error(request, "Only the designated admin can view doctor schedules.")
+        return redirect("feetal_app:index")
+
+    doctor = Doctor.objects.get(id=doctor_id)
+
+    # Days mapping MUST match template keys
+    days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"]
+    schedule = {day: [] for day in days}
+
+    slots = DoctorSchedule.objects.filter(doctor=doctor)
+    for slot in slots:
+        schedule[slot.day].append(slot)
+
+    return render(request, "dashboard/admin_doctor_schedule.html", {
+        "doctor": doctor,
+        "schedule": schedule
+    })
+
+@csrf_exempt
+@login_required
+def admin_add_schedule_slot(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False})
+
+    data = json.loads(request.body)
+    doctor_id = data["doctor_id"]
+    day = data["day"]
+    start_time = data["start"]
+    end_time = data["end"]
+
+    # Prevent duplicates
+    if DoctorSchedule.objects.filter(doctor_id=doctor_id, day=day, start_time=start_time, end_time=end_time).exists():
+        return JsonResponse({"success": False, "message": "Time slot already exists"})
+
+    DoctorSchedule.objects.create(
+        doctor_id=doctor_id, day=day,
+        start_time=start_time, end_time=end_time
+    )
+    return JsonResponse({"success": True})
+
+
+@csrf_exempt
+@login_required
+def admin_remove_schedule_slot(request):
+    data = json.loads(request.body)
+    DoctorSchedule.objects.filter(id=data["slot_id"]).delete()
+    return JsonResponse({"success": True})
 def patient_portal(request):
     """Authenticated portal shell (mock auth handled client-side for now)."""
     return render(request, "patient-portal.html")
@@ -782,26 +879,26 @@ def admin_doctor_toggle_active(request, doctor_id):
     return redirect("feetal_app:dashboard_admin")
 
 
-@login_required
-def admin_doctor_schedule(request, doctor_id):
-    if not request.user.is_superuser:
-        messages.error(
-            request, "Only the designated admin can view doctor schedules."
-        )
-        return redirect("feetal_app:index")
+# @login_required
+# def admin_doctor_schedule(request, doctor_id):
+#     if not request.user.is_superuser:
+#         messages.error(
+#             request, "Only the designated admin can view doctor schedules."
+#         )
+#         return redirect("feetal_app:index")
 
-    doctor = Doctor.objects.select_related("user").filter(pk=doctor_id).first()
-    if not doctor:
-        messages.error(request, "Doctor not found.")
-        return redirect("feetal_app:dashboard_admin")
+#     doctor = Doctor.objects.select_related("user").filter(pk=doctor_id).first()
+#     if not doctor:
+#         messages.error(request, "Doctor not found.")
+#         return redirect("feetal_app:dashboard_admin")
 
-    return render(
-        request,
-        "dashboard/admin_doctor_schedule.html",
-        {
-            "doctor": doctor,
-        },
-    )
+#     return render(
+#         request,
+#         "dashboard/admin_doctor_schedule.html",
+#         {
+#             "doctor": doctor,
+#         },
+#     )
 
 
 @login_required

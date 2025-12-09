@@ -3,66 +3,149 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Schedule • Admin Dashboard</title>
+    <title>Doctor Schedule | Admin Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        body {
-            background: #f8fafc;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            padding: 2rem;
+        body { background:#f8fafc; font-family:'Inter',sans-serif; padding:40px; }
+        .card-box {
+            max-width:1100px; margin:auto; background:white; padding:40px;
+            border-radius:18px; box-shadow:0 12px 40px rgba(0,0,0,0.08);
         }
-        .schedule-card {
-            max-width: 960px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            padding: 2.5rem;
-            box-shadow: 0 15px 45px rgba(15, 23, 42, 0.12);
-        }
-        .schedule-card h1 {
-            margin-bottom: 0.5rem;
-            color: #0f172a;
-        }
-        .schedule-card p {
-            color: #475569;
-            margin-bottom: 2rem;
-        }
+        h1 { font-size:32px; margin-bottom:8px; font-weight:700; }
         .schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
+            margin-top:30px;
+            display:grid;
+            grid-template-columns:repeat(3, 1fr);
+            gap:18px;
         }
+        .day-box {
+            background:#f1f5f9; border-radius:14px; padding:18px;
+        }
+        .day-box h3 { font-size:18px; margin-bottom:12px; color:#1e293b; }
         .slot {
-            border: 1px dashed #cbd5f5;
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            color: #64748b;
+            background:white; padding:8px 12px; border-radius:8px;
+            margin-bottom:6px; border:1px solid #cbd5e1;
+            display:flex; justify-content:space-between; align-items:center;
+            font-size:14px;
+        }
+        .slot button { border:none; background:none; color:#ef4444; cursor:pointer; font-size:16px; }
+        .add-btn {
+            margin-top:6px; background:#7c3aed; border:none; color:white;
+            width:100%; padding:7px; border-radius:6px; cursor:pointer;
+        }
+        /* Modal */
+        .modal {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4);
+            backdrop-filter:blur(3px); justify-content:center; align-items:center; z-index:9999;
+        }
+        .modal-content {
+            width:360px; background:white; padding:22px; border-radius:12px;
+        }
+        .modal-content h3 { margin-bottom:12px; }
+        .modal-content input {
+            width:100%; padding:10px; border:1px solid #cbd5e1;
+            border-radius:6px; margin-bottom:10px;
+        }
+        .modal-actions { display:flex; gap:10px; margin-top:5px; }
+        .btn-main { flex:1; padding:10px; background:#7c3aed; border:none; border-radius:6px; color:white; cursor:pointer; }
+        .btn-cancel { flex:1; padding:10px; background:#e2e8f0; border:none; border-radius:6px; cursor:pointer; }
+        .back-btn {
+            display:inline-block; margin-top:28px; padding:10px 20px;
+            background:#475569; color:white; border-radius:6px; text-decoration:none;
         }
     </style>
 </head>
 <body>
-    <div class="schedule-card">
-        <h1>Schedule for {{ doctor.user.get_full_name|default:doctor.user.username }}</h1>
-        <p>Feature coming soon. Here you will be able to assign or review time slots for each doctor.</p>
-        <div class="schedule-grid">
-            <div class="slot">Monday<br>—</div>
-            <div class="slot">Tuesday<br>—</div>
-            <div class="slot">Wednesday<br>—</div>
-            <div class="slot">Thursday<br>—</div>
-            <div class="slot">Friday<br>—</div>
+
+<div class="card-box">
+    <h1>Schedule for Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}</h1>
+    <p>Assign available time slots for each weekday.</p>
+
+    <div class="schedule-grid">
+        {% for day, slots in schedule.items %}
+        <div class="day-box">
+            <h3>{{ day|title }}</h3>
+
+            {% for s in slots %}
+            <div class="slot">
+                {{ s.start_time }} – {{ s.end_time }}
+                <button onclick="removeSlot('{{ s.id }}')">✕</button>
+            </div>
+            {% empty %}
+            <p style="color:#64748b;font-size:14px;">No slots</p>
+            {% endfor %}
+
+            <button class="add-btn" onclick="openAddSlot('{{ day }}')">+ Add Slot</button>
         </div>
-        <div style="margin-top:2rem;">
-            <a class="btn btn-secondary" href="{% url 'feetal_app:dashboard_admin' %}">Back to dashboard</a>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'feetal_app:dashboard_admin' %}" class="back-btn">← Back to Dashboard</a>
+</div>
+
+
+<!-- MODAL -->
+<div id="addSlotModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Slot <span id="dayLabel"></span></h3>
+        <input type="time" id="startSlot">
+        <input type="time" id="endSlot">
+        <div class="modal-actions">
+            <button class="btn-main" onclick="saveSlot()">Save</button>
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
         </div>
     </div>
+</div>
+
+<script>
+let selectedDay = "";
+
+function getCookie(name){
+    let v = null;
+    document.cookie.split(";").forEach(c=>{
+        c = c.trim();
+        if(c.startsWith(name+"=")) v = decodeURIComponent(c.slice(name.length+1));
+    });
+    return v;
+}
+
+function openAddSlot(day){
+    selectedDay = day;
+    document.getElementById("dayLabel").innerText = "(" + day.toUpperCase() + ")";
+    addSlotModal.style.display = "flex";
+}
+function closeModal(){
+    addSlotModal.style.display = "none";
+}
+
+async function saveSlot(){
+    const payload = {
+        doctor_id: "{{ doctor.id }}",
+        day: selectedDay,
+        start: document.getElementById("startSlot").value,
+        end: document.getElementById("endSlot").value,
+    };
+
+    const res = await fetch("{% url 'feetal_app:admin_add_schedule_slot' %}", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "X-CSRFToken":getCookie("csrftoken") },
+        body:JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if(data.success) location.reload();
+    else alert(data.message);
+}
+
+async function removeSlot(id){
+    await fetch("{% url 'feetal_app:admin_remove_schedule_slot' %}", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "X-CSRFToken":getCookie("csrftoken") },
+        body:JSON.stringify({ slot_id:id })
+    });
+    location.reload();
+}
+</script>
+
 </body>
 </html>
-
-
-
-
-
-
