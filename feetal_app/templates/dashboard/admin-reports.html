@@ -1,0 +1,49 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2 class="page-title"><i class="fas fa-file-medical-alt"></i> ML Analysis Reports</h2>
+
+    {% if reports %}
+        <table class="table table-bordered table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Report Type</th>
+                    <th>Risk Level</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                    <th>Download PDF</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ report.patient_name }}</td>
+                    <td>{{ report.analysis_type }}</td>
+                    <td>
+                        <span class="badge badge-{{ report.risk_level|lower|slugify }}">
+                            {{ report.risk_level }}
+                        </span>
+                    </td>
+                    <td>{{ report.confidence }}%</td>
+                    <td>{{ report.created_at|date:"d-m-Y H:i A" }}</td>
+                    <td>
+                        <a href="{% url 'feetal_app:download_report' report.id %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-download"></i> PDF
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info mt-5 text-center">
+            <i class="fas fa-info-circle"></i> No reports found yet.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

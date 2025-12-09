@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FetoScope - Doctor Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Doctor Dashboard Navbar Styles */
+        .doctor-dashboard-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .doctor-dashboard-nav .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .doctor-dashboard-nav .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .doctor-dashboard-nav .nav-logo i {
+            font-size: 1.5rem;
+        }
+
+        .doctor-dashboard-nav .nav-menu {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .doctor-dashboard-nav .nav-menu li {
+            margin: 0;
+        }
+
+        .doctor-dashboard-nav .nav-menu a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .doctor-dashboard-nav .nav-menu a:hover {
+            color: #1d4ed8;
+        }
+
+        .doctor-dashboard-nav .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .doctor-dashboard-nav .user-info span {
+            color: #2563eb;
+            font-weight: 500;
+        }
+
+        .doctor-dashboard-nav .btn-login {
+            padding: 8px 20px;
+            background: #2563eb;
+            color: white;
+            border: 2px solid #2563eb;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .doctor-dashboard-nav .btn-login:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding-top: 70px;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .dashboard-nav {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .nav-tab:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+
+        .nav-tab.active:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card h3 {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .number {
+            color: #1e293b;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .change {
+            color: #10b981;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .patient-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .patient-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .patient-item:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .patient-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .patient-info h4 {
+            color: #1e293b;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .patient-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .patient-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .schedule-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .schedule-time {
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-right: 1rem;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .schedule-info {
+            flex: 1;
+        }
+
+        .schedule-info h4 {
+            color: #1e293b;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .schedule-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0.25rem 0;
+            line-height: 1.5;
+        }
+
+        .schedule-status {
+            margin-left: auto;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table thead {
+            background: #f8fafc;
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge.status-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-badge.status-warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-badge.status-success {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .text-muted {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="doctor-dashboard-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-user-md"></i>
+                <span>FetoScope - Doctor Dashboard</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'feetal_app:index' %}">Home</a></li>
+                <li>
+                    <div class="user-info">
+                        <span id="doctorName">Dr. {{ user.get_full_name|default:user.first_name|default:user.username }}</span>
+                        <button class="btn-login" onclick="logout()">Logout</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <section class="dashboard-header">
+            <div class="container">
+                <div class="header-content" data-aos="fade-up">
+                    <h1>Welcome, Dr. {{ user.get_full_name|default:user.first_name|default:user.username }}</h1>
+                    <p>Manage your patients, schedule, and medical records</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Navigation -->
+        <section class="dashboard-nav">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('overview')">
+                    <i class="fas fa-chart-pie"></i> Overview
+                </button>
+                <button class="nav-tab" onclick="showTab('patients')">
+                    <i class="fas fa-users"></i> Patients
+                </button>
+                <button class="nav-tab" onclick="showTab('schedule')">
+                    <i class="fas fa-calendar-alt"></i> Schedule
+                </button>
+                <button class="nav-tab" onclick="showTab('reports')">
+                    <i class="fas fa-file-medical"></i> Reports
+                </button>
+            </div>
+        </section>
+
+        <!-- Tab Content -->
+        <div class="container">
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                        <h3>Total Patients</h3>
+                        <div class="number">{{ unique_patients|default:0 }}</div>
+                        <div class="change">{{ total_patients|default:0 }} in system</div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                        <h3>Today's Appointments</h3>
+                        <div class="number">{{ today_appointments|length }}</div>
+                        <div class="change">{{ pending_appointments }} pending</div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                        <h3>Total Appointments</h3>
+                        <div class="number">{{ total_appointments }}</div>
+                        <div class="change">{{ this_month_appointments }} this month</div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+                        <h3>Completed</h3>
+                        <div class="number">{{ completed_appointments }}</div>
+                        <div class="change">{{ pending_appointments }} pending</div>
+                    </div>
+                </div>
+
+                <div class="content-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="card-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="schedule-grid">
+                            {% for appointment in today_appointments|slice:":5" %}
+                            <div class="schedule-item">
+                                <div class="schedule-time">{{ appointment.appointment_time|time:"H:i" }}</div>
+                                <div class="schedule-info">
+                                    <h4>{{ appointment.patient_name }}{% if appointment.patient_age %} (Age: {{ appointment.patient_age }}){% endif %}</h4>
+                                    <p style="margin: 0.25rem 0;">
+                                        <i class="fas fa-envelope" style="margin-right: 0.5rem; color: #64748b;"></i>{{ appointment.patient_email }}
+                                    </p>
+                                    <p style="margin: 0.5rem 0; font-weight: 500;">
+                                        <i class="fas fa-stethoscope" style="margin-right: 0.5rem; color: #2563eb;"></i>{{ appointment.get_reason_display }}
+                                    </p>
+                                    {% if appointment.notes %}
+                                    <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">{{ appointment.notes|truncatewords:8 }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="schedule-status status-{{ appointment.status }}">{{ appointment.get_status_display }}</div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>No Recent Activity</h3>
+                                <p>You have no appointments scheduled for today.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patients Tab -->
+            <div id="patients" class="tab-content">
+                <div class="content-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h2>Patient Management</h2>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Patient
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="patient-list">
+                            {% for patient in all_patients %}
+                            <div class="patient-item">
+                                <div class="patient-avatar">
+                                    {{ patient.user.first_name|first|default:patient.user.username|first|upper }}{{ patient.user.last_name|first|default:""|upper }}
+                                </div>
+                                <div class="patient-info">
+                                    <h4>{{ patient.user.get_full_name|default:patient.user.username }}</h4>
+                                    <p>{{ patient.user.email }} • Phone: {{ patient.phone }}</p>
+                                    <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem;">
+                                        Registered: {{ patient.created_at|date:"M d, Y" }}
+                                    </p>
+                                </div>
+                                <div class="patient-actions">
+                                    <button class="btn-primary">View</button>
+                                    <button class="btn-secondary">Edit</button>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h3>No Patients Found</h3>
+                                <p>No patients have been registered yet.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Tab -->
+            <div id="schedule" class="tab-content">
+                <div class="content-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h2>Today's Schedule</h2>
+                        <button class="btn-primary">
+                            <i class="fas fa-calendar-plus"></i> Add Appointment
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="schedule-grid">
+                            {% for appointment in today_appointments %}
+                            <div class="schedule-item" style="position: relative;">
+                                <div class="schedule-time">{{ appointment.appointment_time|time:"H:i" }}</div>
+                                <div class="schedule-info" style="flex: 1;">
+                                    <h4>{{ appointment.patient_name }}{% if appointment.patient_age %} (Age: {{ appointment.patient_age }}){% endif %}</h4>
+                                    <p style="margin: 0.25rem 0; color: #64748b;">
+                                        <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>{{ appointment.patient_email }}
+                                    </p>
+                                    <p style="margin: 0.25rem 0; color: #64748b;">
+                                        <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>{{ appointment.patient_phone }}
+                                    </p>
+                                    <p style="margin: 0.5rem 0; font-weight: 500; color: #1e293b;">
+                                        <i class="fas fa-stethoscope" style="margin-right: 0.5rem; color: #2563eb;"></i>{{ appointment.get_reason_display }}
+                                    </p>
+                                    {% if appointment.notes %}
+                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f8fafc; border-radius: 6px; border-left: 3px solid #2563eb;">
+                                        <p style="font-size: 0.85rem; color: #475569; margin: 0;">
+                                            <strong>Notes:</strong> {{ appointment.notes }}
+                                        </p>
+                                    </div>
+                                    {% endif %}
+                                    <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #94a3b8;">
+                                        <i class="fas fa-clock" style="margin-right: 0.25rem;"></i>Booked: {{ appointment.created_at|date:"M d, Y H:i" }}
+                                    </p>
+                                </div>
+                                <div class="schedule-status status-{{ appointment.status }}" style="align-self: flex-start;">{{ appointment.get_status_display }}</div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>No Appointments Today</h3>
+                                <p>You have no scheduled appointments for today.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if upcoming_appointments %}
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+                            <h3 style="color: #1e293b; font-size: 1.1rem; margin-bottom: 1rem;">Upcoming Appointments</h3>
+                            <div class="schedule-grid">
+                                {% for appointment in upcoming_appointments %}
+                                {% if appointment.appointment_date != today %}
+                                <div class="schedule-item" style="position: relative;">
+                                    <div class="schedule-time" style="min-width: 120px;">
+                                        {{ appointment.appointment_date|date:"M d" }}<br>
+                                        <small>{{ appointment.appointment_time|time:"H:i" }}</small>
+                                    </div>
+                                    <div class="schedule-info" style="flex: 1;">
+                                        <h4>{{ appointment.patient_name }}{% if appointment.patient_age %} (Age: {{ appointment.patient_age }}){% endif %}</h4>
+                                        <p style="margin: 0.25rem 0; color: #64748b;">
+                                            <i class="fas fa-envelope" style="margin-right: 0.5rem;"></i>{{ appointment.patient_email }}
+                                        </p>
+                                        <p style="margin: 0.25rem 0; color: #64748b;">
+                                            <i class="fas fa-phone" style="margin-right: 0.5rem;"></i>{{ appointment.patient_phone }}
+                                        </p>
+                                        <p style="margin: 0.5rem 0; font-weight: 500; color: #1e293b;">
+                                            <i class="fas fa-stethoscope" style="margin-right: 0.5rem; color: #2563eb;"></i>{{ appointment.get_reason_display }}
+                                        </p>
+                                        {% if appointment.notes %}
+                                        <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f8fafc; border-radius: 6px; border-left: 3px solid #2563eb;">
+                                            <p style="font-size: 0.85rem; color: #475569; margin: 0;">
+                                                <strong>Notes:</strong> {{ appointment.notes|truncatewords:15 }}
+                                            </p>
+                                        </div>
+                                        {% endif %}
+                                        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #94a3b8;">
+                                            <i class="fas fa-clock" style="margin-right: 0.25rem;"></i>Booked: {{ appointment.created_at|date:"M d, Y H:i" }}
+                                        </p>
+                                    </div>
+                                    <div class="schedule-status status-{{ appointment.status }}" style="align-self: flex-start;">{{ appointment.get_status_display }}</div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content">
+                <div class="content-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h2>Patient Analysis Reports</h2>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_reports %}
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient Name</th>
+                                        <th>Email</th>
+                                        <th>Risk Level</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for report in recent_reports %}
+                                    <tr>
+                                        <td>{{ report.patient_name }}</td>
+                                        <td>{{ report.patient_email|default:"N/A" }}</td>
+                                        <td>
+                                            <span class="status-badge 
+                                                {% if report.combined_risk_level == 'High Risk' %}status-danger
+                                                {% elif report.combined_risk_level == 'Medium Risk' %}status-warning
+                                                {% else %}status-success{% endif %}">
+                                                {{ report.combined_risk_level }}
+                                            </span>
+                                        </td>
+                                        <td>{{ report.created_at|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if report.pdf %}
+                                            <a href="{% url 'feetal_app:download_report' report.id %}" target="_blank" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-download"></i> Download PDF
+                                            </a>
+                                            {% else %}
+                                            <span class="text-muted">No PDF available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-file-medical"></i>
+                            <h3>No Reports Available</h3>
+                            <p>Patient analysis reports will appear here once they are generated</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        const LOGIN_URL = "{% url 'feetal_app:dashboard_login' %}";
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+
+        // Initialize dashboard (authentication is handled server-side by Django)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Doctor name is already set from Django template context
+            // No need for client-side authentication check since Django handles it
+        });
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        function logout() {
+            // Redirect to Django logout view
+            window.location.href = "{% url 'feetal_app:user_logout' %}";
+        }
+    </script>
+</body>
+</html>

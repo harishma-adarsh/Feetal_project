@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Doctor • Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #eef2ff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .form-card {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.2);
+        }
+        .form-card h1 {
+            margin-bottom: 0.5rem;
+            color: #312e81;
+        }
+        .form-card p {
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+        label {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            margin-top: 6px;
+            margin-bottom: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid #c7d2fe;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h1>Edit Doctor</h1>
+        <p>Update the details for {{ doctor.user.get_full_name|default:doctor.user.username }}.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <label for="{{ form.first_name.id_for_label }}">First name</label>
+            {{ form.first_name }}
+
+            <label for="{{ form.last_name.id_for_label }}">Last name</label>
+            {{ form.last_name }}
+
+            <label for="{{ form.phone.id_for_label }}">Phone</label>
+            {{ form.phone }}
+
+            <label for="{{ form.specialization.id_for_label }}">Specialization</label>
+            {{ form.specialization }}
+
+            <div class="form-actions">
+                <a class="btn btn-secondary" href="{% url 'feetal_app:dashboard_admin' %}">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+
+
+
+
+

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>FetoScope - Advanced Maternity Care</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-baby"></i>
+                <span>FetoScope</span>
+            </div>
+            <ul class="nav-menu" data-landing-nav="true">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li id="dashboardMenuItem" style="display: none;">
+                    <a href="{% url 'feetal_app:patient_portal' %}" class="dashboard-link">
+                        <i class="fas fa-user"></i> Patient Portal
+                    </a>
+                </li>
+                <li id="navLoginItem">
+                    <button class="btn-login" onclick="openModal('loginModal')">Login</button>
+                </li>
+                <li id="navRegisterItem">
+                    <button class="btn-register" onclick="openModal('registerModal')">Register</button>
+                </li>
+                <li class="nav-dropdown">
+                    <button class="btn-call" onclick="toggleCallDropdown()">
+                        <i class="fas fa-phone"></i>
+                        Call Us
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </button>
+                    <ul id="callDropdown" class="dropdown-menu">
+                        <li><a href="tel:+15551234567">Emergency: +1 (555) 123‑4567</a></li>
+                        <li><a href="tel:+15559876543">Helpline: +1 (555) 987‑6543</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <!-- Maternity Hero Image Background -->
+        <div class="hero-video-container">
+            <img class="hero-video"
+                 src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=1920&q=80"
+                 alt="Modern maternity operating room with surgical team">
+            <div class="hero-overlay"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <div class="hero-container">
+                <div class="hero-text" data-aos="fade-up" data-aos-delay="200">
+                    <h1>Excellence in Healthcare</h1>
+                    <p>Providing compassionate, comprehensive medical care with cutting-edge technology and experienced professionals dedicated to your well-being.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary" onclick="scrollToSection('services')">
+                            <span>Our Services</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn-secondary" onclick="openModal('appointmentModal')">
+                            <span>Book Appointment</span>
+                            <i class="fas fa-calendar-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Floating Stats Cards -->
+                <div class="hero-stats" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-card">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Years of Excellence</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">150+</div>
+                        <div class="stat-label">Expert Doctors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Happy Patients</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <!-- <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="600" onclick="scrollToSection('services')">
+            <div class="scroll-arrow">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <span>Scroll to explore</span>
+        </div> -->
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Our Medical Services</h2>
+                <p>Comprehensive healthcare solutions tailored to your needs</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-icon">
+                        <i class="fas fa-female"></i>
+                    </div>
+                    <h3>Gynecology & Maternity</h3>
+                    <p>Comprehensive women's health and maternity care with AI-powered fetal monitoring and prediction services.</p>
+                    <button class="btn-service" onclick="redirectToMaternity()">Learn More</button>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-icon">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3>Prenatal Counselling</h3>
+                    <p>Warm, expert guidance that explains your scans and tests, reduces anxiety, and helps you feel calm and prepared for your baby.</p>
+                    <div class="open-badge">Available</div>
+                    <button class="btn-service" onclick="openModal('appointmentModal')">Book Counselling</button>
+                </div>
+                <div class="service-card disabled" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Cardiology</h3>
+                    <p>Advanced cardiac care with state-of-the-art equipment and specialized cardiologists.</p>
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <button class="btn-service" disabled>Learn More</button>
+                </div>
+                <div class="service-card disabled" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Neurology</h3>
+                    <p>Expert neurological care for brain and nervous system disorders with modern facilities.</p>
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <button class="btn-service" disabled>Learn More</button>
+                </div>
+                <div class="service-card disabled" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-icon">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3>Pediatrics</h3>
+                    <p>Specialized healthcare for children with pediatric experts and child-friendly environment.</p>
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <button class="btn-service" disabled>Learn More</button>
+                </div>
+                <div class="service-card disabled" data-aos="fade-up" data-aos-delay="600">
+                    <div class="service-icon">
+                        <i class="fas fa-x-ray"></i>
+                    </div>
+                    <h3>Radiology</h3>
+                    <p>Advanced imaging services including MRI, CT scans, and digital X-rays for accurate diagnosis.</p>
+                    <div class="coming-soon-badge">Coming Soon</div>
+                    <button class="btn-service" disabled>Learn More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text" data-aos="fade-right">
+                    <h2>Why Choose FetoScope?</h2>
+                    <p>With over 25 years of excellence in maternity care, FetoScope has been at the forefront of fetal health innovation, providing world-class monitoring with compassionate support.</p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <h3>25+</h3>
+                            <p>Years of Excellence</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>150+</h3>
+                            <p>Expert Doctors</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>50,000+</h3>
+                            <p>Happy Patients</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>24/7</h3>
+                            <p>Emergency Care</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary">Learn More About Us</button>
+                </div>
+                <div class="about-image" data-aos="fade-left">
+                    <img src="{% static 'images/gynecologist_performing_ultrasound_consultation.jpg' %}" alt="Medical Team">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="cta">
+        <div class="container">
+            <div class="cta-content" data-aos="fade-up">
+                <h2>Ready to Take Care of Your Health?</h2>
+                <p>Book your appointment today and experience excellence in healthcare</p>
+                <div class="cta-buttons">
+                    <button class="btn-primary" onclick="openModal('appointmentModal')">Book Appointment</button>
+                    <button class="btn-secondary">Call: +1 (555) 123-4567</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-baby"></i>
+                        <span>FetoScope</span>
+                    </div>
+                    <p>Advanced fetal and maternity care with compassionate support and AI-powered insights.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#" onclick="redirectToMaternity()">Gynecology & Maternity</a></li>
+                        <li><a href="#" >Prenatal Counselling</a></li>
+                        <li><span class="disabled-link">Cardiology <small>(Coming Soon)</small></span></li>
+                        <li><span class="disabled-link">Neurology <small>(Coming Soon)</small></span></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Staff Access</h3>
+                    <ul>
+                        <!-- <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-user-shield"></i> Staff Login</a></li> -->
+                        <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-user-md"></i> Doctor Portal</a></li>
+                        <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-cog"></i> Admin Panel</a></li>
+                        <!-- <li><a href="#" onclick="openModal('doctorRegistrationModal'); return false;"><i class="fas fa-user-plus"></i> Doctor Registration</a></li> -->
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City, MC 12345</p>
+                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@fetoscope.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FetoScope. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+   <!-- Login Modal -->
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Login to Your Account</h2>
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+        </div>
+
+        <form class="auth-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+
+                <!-- 🔹 Password with Eye Icon -->
+                <div class="password-wrapper" style="position: relative;">
+                    <input type="password" id="loginPassword" required placeholder="Enter your password" style="padding-right: 40px;">
+                    <i class="fas fa-eye" id="toggleLoginPassword" 
+                       style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+                              cursor: pointer; color:#6c6c6c;"></i>
+                </div>
+            </div>
+
+            <!-- 🔹 Forgot Password Link -->
+            <div style="text-align:right; margin: -6px 0 14px 0;">
+                <a href="{% url 'feetal_app:forgot_password' %}" 
+                   style="font-size: 14px; color:#0076d6; text-decoration:none;">
+                   Forgot Password?
+                </a>
+            </div>
+
+            <button type="submit" class="btn-primary full-width">Login</button>
+
+            <p class="auth-switch">
+                Don't have an account?
+                <a href="#" onclick="switchModal('loginModal', 'registerModal')">Register here</a>
+            </p>
+        </form>
+
+        <div class="demo-credentials">
+            <h4>Demo Credentials:</h4>
+            <p><strong>Email:</strong> demo@fetoscope.com</p>
+            <p><strong>Password:</strong> demo123</p>
+        </div>
+    </div>
+</div>
+
+      
+
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Your Account</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <form class="auth-form" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number</label>
+                    <input type="tel" id="registerPhone" required placeholder="Enter your phone number">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required placeholder="Create a password">
+                </div>
+                <button type="submit" class="btn-primary full-width">Register</button>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login here</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Doctor Registration Modal -->
+    <!-- <div id="doctorRegistrationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Doctor Registration</h2>
+                <span class="close" onclick="closeModal('doctorRegistrationModal')">&times;</span>
+            </div>
+            <form class="auth-form" onsubmit="handleDoctorRegister(event)">
+                <div id="doctorError" class="error-message" style="display: none;"></div>
+                <div id="doctorSuccess" class="success-message" style="display: none;"></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctorName">Full Name</label>
+                        <input type="text" id="doctorName" name="name" required placeholder="Dr. Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctorEmail">Email</label>
+                        <input type="email" id="doctorEmail" name="email" required placeholder="doctor@example.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="doctorPhone">Phone Number</label>
+                        <input type="tel" id="doctorPhone" name="phone" required placeholder="+1 (555) 123‑4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="specialization">Specialization</label>
+                        <select id="specialization" name="specialization" required>
+                            <option value="">Select specialization</option>
+                            <option value="obgyn">Obstetrics & Gynecology</option>
+                            <option value="mfm">Maternal‑Fetal Medicine</option>
+                            <option value="radiology">Fetal Radiology</option>
+                            <option value="pediatrics">Neonatology / Pediatrics</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regPasswordDoctor">Create Password</label>
+                        <input type="password" id="regPasswordDoctor" name="password" required placeholder="At least 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPasswordDoctor">Confirm Password</label>
+                        <input type="password" id="regConfirmPasswordDoctor" name="password2" required placeholder="Re‑enter password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary full-width">Register as Doctor</button>
+            </form>
+        </div>
+    </div> -->
+
+    <!-- Appointment Booking Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content appointment-modal">
+            <div class="modal-header">
+                <h2>Book Your Appointment</h2>
+                <span class="close" onclick="closeModal('appointmentModal')">&times;</span>
+            </div>
+            <form class="appointment-form" onsubmit="handleAppointmentBooking(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patientName">Full Name *</label>
+                        <input type="text" id="patientName" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientPhone">Phone Number *</label>
+                        <input type="tel" id="patientPhone" required placeholder="Enter your phone number">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patientEmail">Email Address *</label>
+                        <input type="email" id="patientEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientAge">Age *</label>
+                        <input type="number" id="patientAge" required min="1" max="120" placeholder="Enter your age">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointmentDepartment">Department *</label>
+                        <select id="appointmentDepartment" required onchange="updateDoctorsList()">
+                            <option value="">Select Department</option>
+                            <option value="obgyn">Obstetrics & Gynecology</option>
+                            <option value="mfm">Maternal-Fetal Medicine</option>
+                            <option value="radiology">Fetal Radiology</option>
+                            <option value="pediatrics">Neonatology / Pediatrics</option>
+                            <option value="prenatal_counselling">Prenatal Counselling</option>
+                            <option value="all">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentDoctor">Preferred Doctor *</label>
+                        <select id="appointmentDoctor" required disabled>
+                            <option value="">Select a department first</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointmentDate">Preferred Date *</label>
+                        <input type="date" id="appointmentDate" required min="">
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Preferred Time *</label>
+                        <select id="appointmentTime" required>
+                            <option value="">Select Time</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="09:30">09:30 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="10:30">10:30 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="11:30">11:30 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="14:30">02:30 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="15:30">03:30 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                            <option value="16:30">04:30 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentReason">Reason for Visit *</label>
+                    <select id="appointmentReason" required>
+                        <option value="">Select Reason</option>
+                        <option value="routine-checkup">Routine Checkup</option>
+                        <option value="prenatal-care">Prenatal Care</option>
+                        <option value="ultrasound">Ultrasound Scan</option>
+                        <option value="consultation">Medical Consultation</option>
+                        <option value="follow-up">Follow-up Visit</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentNotes">Additional Notes (Optional)</label>
+                    <textarea id="appointmentNotes" placeholder="Any specific concerns or information you'd like to share..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="appointmentTerms" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <div class="appointment-summary" id="appointmentSummary" style="display: none;">
+                    <h4>Appointment Summary</h4>
+                    <div class="summary-content"></div>
+                </div>
+
+                <button type="submit" class="btn-primary full-width">Book Appointment</button>
+                <p class="appointment-note">
+                    <i class="fas fa-info-circle"></i>
+                    You will receive a confirmation email and SMS with appointment details.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>

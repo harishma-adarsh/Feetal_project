@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Schedule • Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .schedule-card {
+            max-width: 960px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, 0.12);
+        }
+        .schedule-card h1 {
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        .schedule-card p {
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .slot {
+            border: 1px dashed #cbd5f5;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="schedule-card">
+        <h1>Schedule for {{ doctor.user.get_full_name|default:doctor.user.username }}</h1>
+        <p>Feature coming soon. Here you will be able to assign or review time slots for each doctor.</p>
+        <div class="schedule-grid">
+            <div class="slot">Monday<br>—</div>
+            <div class="slot">Tuesday<br>—</div>
+            <div class="slot">Wednesday<br>—</div>
+            <div class="slot">Thursday<br>—</div>
+            <div class="slot">Friday<br>—</div>
+        </div>
+        <div style="margin-top:2rem;">
+            <a class="btn btn-secondary" href="{% url 'feetal_app:dashboard_admin' %}">Back to dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+

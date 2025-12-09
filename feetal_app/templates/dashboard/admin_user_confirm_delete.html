@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete User • Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fef2f2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .confirm-card {
+            background: white;
+            width: 100%;
+            max-width: 460px;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(239, 68, 68, 0.2);
+            text-align: center;
+        }
+        .confirm-card h1 {
+            color: #b91c1c;
+            margin-bottom: 1rem;
+        }
+        .confirm-card p {
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+        .confirm-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .btn-danger {
+            background: #dc2626;
+            border: none;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirm-card">
+        <h1>Delete User?</h1>
+        <p>You're about to permanently delete <strong>{{ target_user.get_full_name|default:target_user.username }}</strong>. This action cannot be undone.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="confirm-actions">
+                <a class="btn btn-secondary" href="{% url 'feetal_app:dashboard_admin' %}">Cancel</a>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">Feetal AI</h2>
+        <ul>
+            <li><a href="/dashboard/admin/">Dashboard</a></li>
+            <li><a href="/dashboard/admin/reports/">Reports</a></li>
+            <li><a href="/dashboard/admin/users/">Users</a></li>
+            <li><a href="/dashboard/admin/doctors/">Doctors</a></li>
+            <li><a href="/dashboard/admin/patients/">Patients</a></li>
+            <li><a href="/logout/">Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main content -->
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>
