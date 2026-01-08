@@ -1,1 +1,1 @@
-web: gunicorn maternity.wsgi --workers 1 --threads 2 --timeout 60
+web: gunicorn maternity.wsgi --workers 1 --threads 4 --timeout 120 --log-level debug

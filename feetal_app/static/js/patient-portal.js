@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initializeUploads();
     loadReportHistory();
     initializeBooking();
-    
+
     // Check if user just logged in and open booking modal
     const shouldOpenBooking = sessionStorage.getItem("openBookingModal");
     if (shouldOpenBooking === "true") {
@@ -196,12 +196,12 @@ async function processCombinedAnalysis() {
     try {
         // Prepare FormData with actual uploaded files
         const formData = new FormData();
-        
+
         // Add scanning files
         uploadedScanningFiles.forEach((file) => {
             formData.append("scanning_files", file);
         });
-        
+
         // Add medical report files
         uploadedMedicalFiles.forEach((file) => {
             formData.append("medical_files", file);
@@ -221,10 +221,10 @@ async function processCombinedAnalysis() {
         // - Saves to doctor dashboard
         // - Returns only success message to patient
         const response = await fetch("/api/predict/combined-analysis/", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": getCookie("csrftoken")
-        },
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            },
             body: formData
         });
 
@@ -235,12 +235,12 @@ async function processCombinedAnalysis() {
         if (data.success) {
             // Show success message only - patient doesn't see results
             showNotification(data.message || "Your reports were analyzed successfully and forwarded to our medical team. They will review and contact you.", "success");
-            
+
             // Clear uploaded files
             uploadedScanningFiles = [];
             uploadedMedicalFiles = [];
             updateCombinedBtnState();
-            
+
             // Clear file displays
             const scanningUpload = document.getElementById("scanningUpload");
             const medicalUpload = document.getElementById("medicalUpload");
@@ -254,7 +254,7 @@ async function processCombinedAnalysis() {
                 const fileList = medicalUpload.querySelector(".file-list");
                 if (fileList) fileList.remove();
             }
-            
+
             // Clear file inputs
             document.getElementById("scanningFiles").value = "";
             document.getElementById("medicalFiles").value = "";
@@ -263,8 +263,13 @@ async function processCombinedAnalysis() {
         }
     } catch (error) {
         hideLoadingModal();
-        console.error("Combined analysis error:", error);
-        showNotification("An error occurred during analysis. Please try again.", "error");
+        console.error("Combined analysis error details:", error);
+
+        // Detailed error for debugging
+        let errorMsg = "An error occurred during analysis.";
+        if (error.message) errorMsg += " Details: " + error.message;
+
+        showNotification(errorMsg + " Please try again.", "error");
     }
 }
 
@@ -277,8 +282,8 @@ function showResults(results, type) {
     // Change circle color based on risk
     let riskColor =
         results.overall_risk === "High Risk" ? "#dc2626" :
-        results.overall_risk === "Medium Risk" ? "#eab308" :
-        "#10b981";
+            results.overall_risk === "Medium Risk" ? "#eab308" :
+                "#10b981";
 
     modalContent.innerHTML = `
         <div class="result-header">
@@ -355,9 +360,9 @@ function showNotification(msg, type = "info") {
         animation: slideIn 0.3s ease;
     `;
     notification.textContent = msg;
-    
+
     document.body.appendChild(notification);
-    
+
     // Remove after 5 seconds
     setTimeout(() => {
         notification.style.animation = "slideOut 0.3s ease";
@@ -371,14 +376,14 @@ function saveToHistory(type, files, results) {
     let history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
     history.push({ type, date: new Date().toISOString(), results });
     localStorage.setItem("analysisHistory", JSON.stringify(history));
-    
+
 
     loadReportHistory();
 }
 
 function loadReportHistory() {
     let history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
-     localStorage.removeItem("analysisHistory");
+    localStorage.removeItem("analysisHistory");
     const container = document.getElementById("reportsHistory");
     container.innerHTML = "";
 
@@ -409,13 +414,13 @@ function openModal(modalId) {
     if (modal) {
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
-        
+
         // Add animation class
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
             modalContent.style.animation = 'modalSlideIn 0.3s ease';
         }
-        
+
         // If it's the appointment modal, initialize it
         if (modalId === 'appointmentModal') {
             initializeBooking();
@@ -428,28 +433,28 @@ function closeModal(modalId) {
     if (modal) {
         modal.style.display = 'none';
         modal.classList.remove('active');
-        
+
         // Remove any modal overlay
         const overlay = document.querySelector('.modal-overlay');
         if (overlay) {
             overlay.remove();
         }
-        
+
         // Ensure body scroll is enabled
         document.body.style.overflow = 'auto';
         document.body.style.position = '';
         document.body.style.width = '';
-        
+
         // Clear form inputs
         const form = modal.querySelector('form');
         if (form) {
             form.reset();
         }
-        
+
         // Clear error messages
         const errorMessages = modal.querySelectorAll('.error-message, .success-message, .appointment-success');
         errorMessages.forEach(msg => msg.remove());
-        
+
         // Remove any backdrop
         const backdrop = document.querySelector('.modal-backdrop');
         if (backdrop) {
@@ -459,7 +464,7 @@ function closeModal(modalId) {
 }
 
 // Close modal when clicking outside or on close button
-window.addEventListener('click', function(event) {
+window.addEventListener('click', function (event) {
     if (event.target.classList.contains('modal')) {
         closeModal(event.target.id);
     }
@@ -473,7 +478,7 @@ window.addEventListener('click', function(event) {
 });
 
 // Close modal with Escape key
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         const openModal = document.querySelector('.modal[style*="block"], .modal.active');
         if (openModal) {
@@ -491,7 +496,7 @@ function initializeBooking() {
         const today = new Date().toISOString().split("T")[0];
         dateInput.setAttribute("min", today);
     }
-    
+
     // Pre-fill user information if available
     const currentUser = sessionStorage.getItem("currentUser");
     if (currentUser) {
@@ -511,24 +516,24 @@ async function updateDoctorsList() {
     const departmentSelect = document.getElementById("appointmentDepartment");
     const doctorSelect = document.getElementById("appointmentDoctor");
     if (!departmentSelect || !doctorSelect) return;
-    
+
     const selectedDepartment = departmentSelect.value;
-    
+
     // Clear and reset doctor dropdown
     doctorSelect.innerHTML = '<option value="">Loading doctors...</option>';
     doctorSelect.disabled = true;
-    
+
     if (!selectedDepartment) {
         doctorSelect.innerHTML = '<option value="">Select a department first</option>';
         return;
     }
-    
+
     try {
         // Map department values to specialization codes
         // If "all" is selected, don't pass specialization parameter to get all doctors
         const specialization = selectedDepartment === 'all' ? '' : selectedDepartment;
         const url = `/api/doctors${specialization ? '?specialization=' + specialization : ''}`;
-        
+
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -536,9 +541,9 @@ async function updateDoctorsList() {
             },
             credentials: 'include'
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success && data.doctors.length > 0) {
             doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
             data.doctors.forEach(doctor => {
@@ -561,25 +566,25 @@ async function updateDoctorsList() {
 }
 
 function validateAppointmentForm(formData) {
-    if (!formData.patientName || !formData.patientPhone || !formData.patientEmail || 
-        !formData.patientAge || !formData.doctor || !formData.date || 
+    if (!formData.patientName || !formData.patientPhone || !formData.patientEmail ||
+        !formData.patientAge || !formData.doctor || !formData.date ||
         !formData.time || !formData.reason || !formData.terms) {
         showNotification("Please fill in all required fields.");
         return false;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.patientEmail)) {
         showNotification("Please enter a valid email address.");
         return false;
     }
-    
+
     return true;
 }
 
 async function handleAppointmentBooking(event) {
     event.preventDefault();
-    
+
     // Get form data
     const formData = {
         patientName: document.getElementById('patientName').value,
@@ -594,18 +599,18 @@ async function handleAppointmentBooking(event) {
         notes: document.getElementById('appointmentNotes').value,
         terms: document.getElementById('appointmentTerms').checked
     };
-    
+
     // Validate form
     if (!validateAppointmentForm(formData)) {
         return;
     }
-    
+
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
-    
+
     try {
         // Get CSRF token
         const csrfToken = getCookie('csrftoken');
@@ -616,7 +621,7 @@ async function handleAppointmentBooking(event) {
             submitBtn.textContent = originalText;
             return;
         }
-        
+
         // Prepare request body
         const requestBody = {
             patientName: formData.patientName,
@@ -629,7 +634,7 @@ async function handleAppointmentBooking(event) {
             reason: formData.reason,
             notes: formData.notes || ''
         };
-        
+
         // Submit to backend
         const response = await fetch('/api/appointments/book/', {
             method: 'POST',
@@ -640,7 +645,7 @@ async function handleAppointmentBooking(event) {
             credentials: 'include',
             body: JSON.stringify(requestBody)
         });
-        
+
         // Check if response is OK
         if (!response.ok) {
             let errorMessage = 'Failed to book appointment. Please try again.';
@@ -655,24 +660,24 @@ async function handleAppointmentBooking(event) {
             submitBtn.textContent = originalText;
             return;
         }
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Show success message
             showAppointmentConfirmation(data.appointment_id, {
                 ...formData,
                 appointment: data.appointment
             });
-            
+
             // Reset form and button
             event.target.reset();
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
-            
+
             // Re-initialize booking to set min date again
             initializeBooking();
-            
+
             // Close modal after delay and redirect to patient portal page
             setTimeout(() => {
                 closeModal('appointmentModal');
@@ -696,7 +701,7 @@ async function handleAppointmentBooking(event) {
 function validateAppointmentForm(data) {
     // Check required fields
     const requiredFields = ['patientName', 'patientPhone', 'patientEmail', 'patientAge', 'department', 'doctor', 'date', 'time', 'reason'];
-    
+
     for (let field of requiredFields) {
         const value = data[field];
         if (!value || (typeof value === 'string' && value.trim() === '')) {
@@ -705,21 +710,21 @@ function validateAppointmentForm(data) {
             return false;
         }
     }
-    
+
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.patientEmail)) {
         showError('appointmentModal', 'Please enter a valid email address.');
         return false;
     }
-    
+
     // Validate age
     const age = parseInt(data.patientAge);
     if (age < 1 || age > 120) {
         showError('appointmentModal', 'Please enter a valid age between 1 and 120.');
         return false;
     }
-    
+
     // Validate date (must be future date)
     const selectedDate = new Date(data.date);
     const today = new Date();
@@ -728,13 +733,13 @@ function validateAppointmentForm(data) {
         showError('appointmentModal', 'Please select a future date for your appointment.');
         return false;
     }
-    
+
     // Validate terms
     if (!data.terms) {
         showError('appointmentModal', 'Please agree to the Terms and Conditions to proceed.');
         return false;
     }
-    
+
     return true;
 }
 
@@ -745,21 +750,21 @@ function showError(modalId, message) {
         alert(message);
         return;
     }
-    
+
     const form = modal.querySelector('.auth-form') || modal.querySelector('.appointment-form') || modal.querySelector('form');
-    
+
     if (!form) {
         console.error('Form not found in modal');
         alert(message);
         return;
     }
-    
+
     // Remove existing error messages
     const existingError = form.querySelector('.error-message');
     if (existingError) {
         existingError.remove();
     }
-    
+
     // Create error message element
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
@@ -773,10 +778,10 @@ function showError(modalId, message) {
         border: 1px solid #fecaca;
     `;
     errorDiv.textContent = message;
-    
+
     // Insert at the beginning of the form
     form.insertBefore(errorDiv, form.firstChild);
-    
+
     // Scroll to error message
     errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -787,19 +792,19 @@ function showAppointmentConfirmation(appointmentId, data) {
         console.error('Appointment modal not found');
         return;
     }
-    
+
     const form = modal.querySelector('.appointment-form');
     if (!form) {
         console.error('Appointment form not found');
         return;
     }
-    
+
     // Remove existing success messages
     const existingSuccess = form.querySelector('.appointment-success');
     if (existingSuccess) {
         existingSuccess.remove();
     }
-    
+
     // Create success message
     const successDiv = document.createElement('div');
     successDiv.className = 'appointment-success';
@@ -811,16 +816,16 @@ function showAppointmentConfirmation(appointmentId, data) {
         margin-bottom: 1rem;
         text-align: center;
     `;
-    
+
     // Format date
     let formattedDate = 'N/A';
     if (data.date) {
         try {
-            formattedDate = new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            formattedDate = new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
         } catch (e) {
             formattedDate = data.date;
@@ -828,7 +833,7 @@ function showAppointmentConfirmation(appointmentId, data) {
     } else if (data.appointment && data.appointment.date) {
         formattedDate = data.appointment.date;
     }
-    
+
     // Format time
     let formattedTime = 'N/A';
     if (data.time) {
@@ -840,7 +845,7 @@ function showAppointmentConfirmation(appointmentId, data) {
     } else if (data.appointment && data.appointment.time) {
         formattedTime = data.appointment.time;
     }
-    
+
     successDiv.innerHTML = `
         <div style="font-size: 3rem; margin-bottom: 1rem;">✓</div>
         <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Appointment Booked Successfully!</h3>
@@ -849,7 +854,7 @@ function showAppointmentConfirmation(appointmentId, data) {
         ${data.appointment && data.appointment.doctor ? `<p style="margin-bottom: 1rem;"><strong>Doctor:</strong> ${data.appointment.doctor}</p>` : ''}
         <p style="font-size: 0.9rem; opacity: 0.9;">You will receive a confirmation email shortly.</p>
     `;
-    
+
     form.insertBefore(successDiv, form.firstChild);
     successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
