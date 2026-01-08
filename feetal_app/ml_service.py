@@ -49,10 +49,25 @@ def load_preterm_delivery_model():
     if _preterm_delivery_model is None:
         try:
             from tensorflow import keras
-            _preterm_delivery_model = keras.models.load_model(get_model_path("preterm_delivery_cnn.h5"))
+            model_path = get_model_path("preterm_delivery_cnn.h5")
+            
+            # Check if file exists and its size (Git LFS debugging)
+            if os.path.exists(model_path):
+                file_size = os.path.getsize(model_path)
+                logger.info(f"Model file found at {model_path}, size: {file_size} bytes")
+                if file_size < 10000: # Less than 10KB is definitely a dummy LFS pointer
+                    logger.error("CRITICAL: The model file is too small. It appears to be a Git LFS pointer, not the actual model.")
+                    return None
+            else:
+                logger.error(f"CRITICAL: Model file NOT FOUND at {model_path}")
+                return None
+
+            _preterm_delivery_model = keras.models.load_model(model_path)
             logger.info("Preterm delivery CNN model loaded successfully")
         except Exception as e:
             logger.error(f"Preterm model load error: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             _preterm_delivery_model = None
     return _preterm_delivery_model
 
