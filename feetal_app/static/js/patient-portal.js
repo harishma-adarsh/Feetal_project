@@ -230,6 +230,21 @@ async function processCombinedAnalysis() {
 
         hideLoadingModal();
 
+        // handle non-JSON responses (e.g. 413, 502, 504)
+        if (!response.ok) {
+            let errorMsg = `Server error (${response.status})`;
+            try {
+                const errData = await response.json();
+                if (errData.message) errorMsg = errData.message;
+            } catch (e) {
+                if (response.status === 413) errorMsg = "File too large (Max 10MB)";
+                else if (response.status === 502) errorMsg = "Server overloaded (Try again later)";
+                else if (response.status === 504) errorMsg = "Server timeout (Try again later)";
+            }
+            showNotification(errorMsg, "error");
+            return;
+        }
+
         const data = await response.json();
 
         if (data.success) {

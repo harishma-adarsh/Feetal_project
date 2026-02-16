@@ -1,17 +1,17 @@
 const PATIENT_PORTAL_URL = '/patient-portal/';
 
 // Initialize AOS (Animate On Scroll)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     AOS.init({
         duration: 800,
         easing: 'ease-in-out',
         once: true,
         offset: 100
     });
-    
+
     // Initialize navbar scroll effect
     initNavbarScrollEffect();
-    
+
     // Set minimum date for appointment date input
     const appointmentDateInput = document.getElementById('appointmentDate');
     if (appointmentDateInput) {
@@ -24,17 +24,17 @@ document.addEventListener('DOMContentLoaded', function() {
 function initNavbarScrollEffect() {
     const navbar = document.querySelector('.navbar');
     let lastScrollTop = 0;
-    
-    window.addEventListener('scroll', function() {
+
+    window.addEventListener('scroll', function () {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
         // Add scrolled class when scrolled down more than 100px
         if (scrollTop > 100) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-        
+
         lastScrollTop = scrollTop;
     });
 }
@@ -45,19 +45,19 @@ const mockUsers = [
         email: 'demo@fetoscope.com',
         password: 'demo123',
         name: 'Demo User',
-        phone: '+1 (555) 123-4567'
+        phone: '+91 484 234 5678'
     },
     {
         email: 'patient@example.com',
         password: 'patient123',
         name: 'John Smith',
-        phone: '+1 (555) 987-6543'
+        phone: '+91 94470 12345'
     },
     {
         email: 'doctor@fetoscope.com',
         password: 'doctor123',
         name: 'Dr. Sarah Johnson',
-        phone: '+1 (555) 456-7890'
+        phone: '+91 484 234 9999'
     }
 ];
 
@@ -70,7 +70,7 @@ function openModal(modalId) {
     if (modal) {
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
-        
+
         // Add animation class
         const modalContent = modal.querySelector('.modal-content');
         modalContent.style.animation = 'modalSlideIn 0.3s ease';
@@ -82,13 +82,13 @@ function closeModal(modalId) {
     if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-        
+
         // Clear form inputs
         const form = modal.querySelector('form');
         if (form) {
             form.reset();
         }
-        
+
         // Clear any error messages
         clearErrorMessages();
     }
@@ -102,7 +102,7 @@ function switchModal(currentModalId, targetModalId) {
 }
 
 // Close modal when clicking outside
-window.addEventListener('click', function(event) {
+window.addEventListener('click', function (event) {
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
         if (event.target === modal) {
@@ -112,7 +112,7 @@ window.addEventListener('click', function(event) {
 });
 
 // Close modal with Escape key
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
@@ -142,19 +142,19 @@ function getCookie(name) {
 // Login Handler
 async function handleLogin(event) {
     event.preventDefault();
-    
+
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
-    
+
     // Clear previous error messages
     clearErrorMessages();
-    
+
     // Validate inputs
     if (!email || !password) {
         showError('loginModal', 'Please fill in all fields.');
         return;
     }
-    
+
     try {
         const response = await fetch('/patient/login/', {
             method: 'POST',
@@ -167,17 +167,17 @@ async function handleLogin(event) {
                 password: password
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Successful login
             showSuccess('loginModal', data.message);
-            
+
             // Store user session
             // sessionStorage.setItem('currentUser', JSON.stringify(data.user));
             sessionStorage.removeItem('currentUser');   // clear old stored user
-           sessionStorage.setItem(
+            sessionStorage.setItem(
                 "currentUser",
                 JSON.stringify({
                     name: data.user.name,
@@ -187,10 +187,10 @@ async function handleLogin(event) {
             );
             console.log("User stored to sessionStorage:", sessionStorage.getItem("currentUser"));
 
-            
+
             // Set flag to open booking modal after redirect
             sessionStorage.setItem('openBookingModal', 'true');
-            
+
             // Close modal after delay and redirect to patient portal
             setTimeout(() => {
                 closeModal('loginModal');
@@ -208,34 +208,34 @@ async function handleLogin(event) {
 // Registration Handler
 async function handleRegister(event) {
     event.preventDefault();
-    
+
     const name = document.getElementById('registerName').value.trim();
     const email = document.getElementById('registerEmail').value.trim();
     const phone = document.getElementById('registerPhone').value.trim();
     const password = document.getElementById('registerPassword').value;
-    
+
     // Clear previous error messages
     clearErrorMessages();
-    
+
     // Validate inputs
     if (!name || !email || !phone || !password) {
         showError('registerModal', 'Please fill in all fields.');
         return;
     }
-    
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         showError('registerModal', 'Please enter a valid email address.');
         return;
     }
-    
+
     // Validate password length
     if (password.length < 6) {
         showError('registerModal', 'Password must be at least 6 characters long.');
         return;
     }
-    
+
     try {
         const response = await fetch('/patient/register/', {
             method: 'POST',
@@ -250,17 +250,17 @@ async function handleRegister(event) {
                 password: password
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Show success message
             showSuccess('registerModal', data.message);
-            
+
             // Store user session
             // sessionStorage.setItem('currentUser', JSON.stringify(data.user));
             sessionStorage.removeItem('currentUser');
-                    sessionStorage.setItem(
+            sessionStorage.setItem(
                 "currentUser",
                 JSON.stringify({
                     name: data.user.name,
@@ -272,10 +272,10 @@ async function handleRegister(event) {
 
 
 
-            
+
             // Set flag to open booking modal after redirect
             sessionStorage.setItem('openBookingModal', 'true');
-            
+
             // Close modal after delay and redirect to patient portal
             setTimeout(() => {
                 closeModal('registerModal');
@@ -293,20 +293,20 @@ async function handleRegister(event) {
 // Doctor Registration Handler
 async function handleDoctorRegister(event) {
     event.preventDefault();
-    
+
     const name = document.getElementById('doctorName').value.trim();
     const email = document.getElementById('doctorEmail').value.trim();
     const phone = document.getElementById('doctorPhone').value.trim();
     const specialization = document.getElementById('specialization').value;
     const password = document.getElementById('regPasswordDoctor').value;
     const password2 = document.getElementById('regConfirmPasswordDoctor').value;
-    
+
     // Clear previous messages
     const errorDiv = document.getElementById('doctorError');
     const successDiv = document.getElementById('doctorSuccess');
     if (errorDiv) errorDiv.style.display = 'none';
     if (successDiv) successDiv.style.display = 'none';
-    
+
     // Validate inputs
     if (!name || !email || !phone || !specialization || !password || !password2) {
         if (errorDiv) {
@@ -315,7 +315,7 @@ async function handleDoctorRegister(event) {
         }
         return;
     }
-    
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -325,7 +325,7 @@ async function handleDoctorRegister(event) {
         }
         return;
     }
-    
+
     // Validate password length
     if (password.length < 6) {
         if (errorDiv) {
@@ -334,7 +334,7 @@ async function handleDoctorRegister(event) {
         }
         return;
     }
-    
+
     // Validate password match
     if (password !== password2) {
         if (errorDiv) {
@@ -343,7 +343,7 @@ async function handleDoctorRegister(event) {
         }
         return;
     }
-    
+
     try {
         const response = await fetch('/api/doctor/register/', {
             method: 'POST',
@@ -361,15 +361,15 @@ async function handleDoctorRegister(event) {
                 password2: password2
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             if (successDiv) {
                 successDiv.textContent = data.message;
                 successDiv.style.display = 'block';
             }
-            
+
             // Close modal after delay and redirect to doctor dashboard
             setTimeout(() => {
                 closeModal('doctorRegistrationModal');
@@ -403,22 +403,22 @@ function showError(modalId, message) {
         alert(message); // Fallback to alert if modal not found
         return;
     }
-    
+
     // Try to find form (could be .auth-form or .appointment-form)
     const form = modal.querySelector('.auth-form') || modal.querySelector('.appointment-form') || modal.querySelector('form');
-    
+
     if (!form) {
         console.error('Form not found in modal');
         alert(message); // Fallback to alert if form not found
         return;
     }
-    
+
     // Remove existing error messages
     const existingError = form.querySelector('.error-message');
     if (existingError) {
         existingError.remove();
     }
-    
+
     // Create error message element
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
@@ -432,10 +432,10 @@ function showError(modalId, message) {
         border: 1px solid #fecaca;
     `;
     errorDiv.textContent = message;
-    
+
     // Insert at the beginning of the form
     form.insertBefore(errorDiv, form.firstChild);
-    
+
     // Scroll to error message
     errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -443,13 +443,13 @@ function showError(modalId, message) {
 function showSuccess(modalId, message) {
     const modal = document.getElementById(modalId);
     const form = modal.querySelector('.auth-form');
-    
+
     // Remove existing messages
     const existingMessage = form.querySelector('.success-message, .error-message');
     if (existingMessage) {
         existingMessage.remove();
     }
-    
+
     // Create success message element
     const successDiv = document.createElement('div');
     successDiv.className = 'success-message';
@@ -463,7 +463,7 @@ function showSuccess(modalId, message) {
         border: 1px solid #a7f3d0;
     `;
     successDiv.textContent = message;
-    
+
     // Insert at the beginning of the form
     form.insertBefore(successDiv, form.firstChild);
 }
@@ -531,19 +531,19 @@ function updateUIForLoggedInUser(user) {
 function logout() {
     // Clear user session
     sessionStorage.removeItem('currentUser');
-    
+
     // Hide dashboard menu item
     const dashboardMenuItem = document.getElementById('dashboardMenuItem');
     if (dashboardMenuItem) {
         dashboardMenuItem.style.display = 'none';
     }
-    
+
     // Reload page to reset UI
     window.location.reload();
 }
 
 // Check if user is already logged in on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     ensureNavAuthButtons();
     const currentUser = sessionStorage.getItem('currentUser');
     if (currentUser) {
@@ -569,12 +569,12 @@ function showNotification(message, type = 'info') {
     // Remove existing notifications
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notif => notif.remove());
-    
+
     const notification = document.createElement('div');
     notification.className = 'notification';
-    
+
     const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#2563eb';
-    
+
     notification.style.cssText = `
         position: fixed;
         top: 90px;
@@ -589,10 +589,10 @@ function showNotification(message, type = 'info') {
         animation: slideInRight 0.3s ease;
         max-width: 300px;
     `;
-    
+
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     // Auto remove after 4 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease';
@@ -635,13 +635,13 @@ document.head.appendChild(style);
 function toggleMobileMenu() {
     const navMenu = document.querySelector('.nav-menu');
     const hamburger = document.querySelector('.hamburger');
-    
+
     navMenu.classList.toggle('active');
     hamburger.classList.toggle('active');
 }
 
 // Add click handler for hamburger menu
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const hamburger = document.querySelector('.hamburger');
     if (hamburger) {
         hamburger.addEventListener('click', toggleMobileMenu);
@@ -666,7 +666,7 @@ function fillDemoCredentials() {
 }
 
 // Add demo credentials click handler
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const demoCredentials = document.querySelector('.demo-credentials');
     if (demoCredentials) {
         demoCredentials.style.cursor = 'pointer';
@@ -678,7 +678,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Maternity service redirection
 function redirectToMaternity() {
     const currentUser = sessionStorage.getItem('currentUser');
-    
+
     if (currentUser) {
         // User is logged in, redirect to patient portal
         window.location.href = PATIENT_PORTAL_URL;
@@ -696,60 +696,60 @@ async function updateDoctorsList() {
     const departmentSelect = document.getElementById('appointmentDepartment');
     const doctorSelect = document.getElementById('appointmentDoctor');
     const selectedDepartment = departmentSelect.value;
-    
+
     // Clear and reset doctor dropdown
     doctorSelect.innerHTML = '<option value="">Loading doctors...</option>';
     doctorSelect.disabled = true;
-    
+
     if (!selectedDepartment) {
         doctorSelect.innerHTML = '<option value="">Select a department first</option>';
         doctorSelect.disabled = true;
         return;
     }
-    
-        try {
+
+    try {
         // Map department values to specialization codes
         // If "all" is selected, don't pass specialization parameter to get all doctors
-            const specializationMap = {
+        const specializationMap = {
             'gynecology': 'obgyn'  // Legacy support
-            };
+        };
         const specialization = selectedDepartment === 'all' ? '' : (specializationMap[selectedDepartment] || selectedDepartment);
         const url = `/api/doctors${specialization ? '?specialization=' + specialization : ''}`;
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include'
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.doctors.length > 0) {
+            doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+            doctorSelect.disabled = false;
+
+            data.doctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = `${doctor.name} - ${doctor.specialization}`;
+                doctorSelect.appendChild(option);
             });
-            
-            const data = await response.json();
-            
-            if (data.success && data.doctors.length > 0) {
-                doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
-                doctorSelect.disabled = false;
-                
-                data.doctors.forEach(doctor => {
-                    const option = document.createElement('option');
-                    option.value = doctor.id;
-                    option.textContent = `${doctor.name} - ${doctor.specialization}`;
-                    doctorSelect.appendChild(option);
-                });
-            } else {
+        } else {
             doctorSelect.innerHTML = '<option value="">No doctors available for this department</option>';
-                doctorSelect.disabled = true;
-            }
-        } catch (error) {
-            console.error('Error fetching doctors:', error);
-            doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+            doctorSelect.disabled = true;
+        }
+    } catch (error) {
+        console.error('Error fetching doctors:', error);
+        doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
         doctorSelect.disabled = true;
     }
 }
 
 async function handleAppointmentBooking(event) {
     event.preventDefault();
-    
+
     // Get form data
     const formData = {
         patientName: document.getElementById('patientName').value,
@@ -764,18 +764,18 @@ async function handleAppointmentBooking(event) {
         notes: document.getElementById('appointmentNotes').value,
         terms: document.getElementById('appointmentTerms').checked
     };
-    
+
     // Validate form
     if (!validateAppointmentForm(formData)) {
         return;
     }
-    
+
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
-    
+
     try {
         // Get CSRF token
         const csrfToken = getCookie('csrftoken');
@@ -786,7 +786,7 @@ async function handleAppointmentBooking(event) {
             submitBtn.textContent = originalText;
             return;
         }
-        
+
         // Prepare request body
         const requestBody = {
             patientName: formData.patientName,
@@ -799,9 +799,9 @@ async function handleAppointmentBooking(event) {
             reason: formData.reason,
             notes: formData.notes || ''
         };
-        
+
         console.log('Booking appointment with data:', requestBody);
-        
+
         // Submit to backend
         const response = await fetch('/api/appointments/book/', {
             method: 'POST',
@@ -812,9 +812,9 @@ async function handleAppointmentBooking(event) {
             credentials: 'include',
             body: JSON.stringify(requestBody)
         });
-        
+
         console.log('Response status:', response.status);
-        
+
         // Check if response is OK
         if (!response.ok) {
             let errorMessage = 'Failed to book appointment. Please try again.';
@@ -829,21 +829,21 @@ async function handleAppointmentBooking(event) {
             submitBtn.textContent = originalText;
             return;
         }
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Show success message
             showAppointmentConfirmation(data.appointment_id, {
                 ...formData,
                 appointment: data.appointment
             });
-            
+
             // Reset form and button
             event.target.reset();
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
-            
+
             // Close modal after delay
             setTimeout(() => {
                 closeModal('appointmentModal');
@@ -865,7 +865,7 @@ async function handleAppointmentBooking(event) {
 function validateAppointmentForm(data) {
     // Check required fields
     const requiredFields = ['patientName', 'patientPhone', 'patientEmail', 'patientAge', 'department', 'doctor', 'date', 'time', 'reason'];
-    
+
     for (let field of requiredFields) {
         const value = data[field];
         if (!value || (typeof value === 'string' && value.trim() === '')) {
@@ -874,43 +874,43 @@ function validateAppointmentForm(data) {
             return false;
         }
     }
-    
+
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.patientEmail)) {
         showError('appointmentModal', 'Please enter a valid email address.');
         return false;
     }
-    
+
     // Validate age
     const age = parseInt(data.patientAge);
     if (age < 1 || age > 120) {
         showError('appointmentModal', 'Please enter a valid age between 1 and 120.');
         return false;
     }
-    
+
     // Validate date (must be future date)
     const selectedDate = new Date(data.date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (selectedDate < today) {
         showError('appointmentModal', 'Please select a future date for your appointment.');
         return false;
     }
-    
+
     // Validate terms agreement
     if (!data.terms) {
         showError('appointmentModal', 'Please agree to the Terms and Conditions to proceed.');
         return false;
     }
-    
+
     return true;
 }
 
 function saveAppointment(appointmentId, data) {
     let appointments = JSON.parse(sessionStorage.getItem('appointments') || '[]');
-    
+
     const appointment = {
         id: appointmentId,
         ...data,
@@ -919,14 +919,14 @@ function saveAppointment(appointmentId, data) {
         doctorName: getDoctorName(data.doctor, data),
         departmentName: getDepartmentName(data.department)
     };
-    
+
     appointments.unshift(appointment);
-    
+
     // Keep only last 20 appointments
     if (appointments.length > 20) {
         appointments = appointments.slice(0, 20);
     }
-    
+
     sessionStorage.setItem('appointments', JSON.stringify(appointments));
 }
 
@@ -957,19 +957,19 @@ function showAppointmentConfirmation(appointmentId, data) {
         console.error('Appointment modal not found');
         return;
     }
-    
+
     const form = modal.querySelector('.appointment-form');
     if (!form) {
         console.error('Appointment form not found');
         return;
     }
-    
+
     // Remove existing success messages
     const existingSuccess = form.querySelector('.appointment-success');
     if (existingSuccess) {
         existingSuccess.remove();
     }
-    
+
     // Create success message
     const successDiv = document.createElement('div');
     successDiv.className = 'appointment-success';
@@ -981,16 +981,16 @@ function showAppointmentConfirmation(appointmentId, data) {
         margin-bottom: 1rem;
         text-align: center;
     `;
-    
+
     // Format date
     let formattedDate = 'N/A';
     if (data.date) {
         try {
-            formattedDate = new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            formattedDate = new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
         } catch (e) {
             formattedDate = data.date;
@@ -998,7 +998,7 @@ function showAppointmentConfirmation(appointmentId, data) {
     } else if (data.appointment && data.appointment.date) {
         formattedDate = data.appointment.date;
     }
-    
+
     // Format time
     let formattedTime = 'N/A';
     if (data.time) {
@@ -1006,13 +1006,13 @@ function showAppointmentConfirmation(appointmentId, data) {
     } else if (data.appointment && data.appointment.time) {
         formattedTime = data.appointment.time;
     }
-    
+
     // Get doctor name
     const doctorName = getDoctorName(data.doctor, data);
-    
+
     // Get department name
     const departmentName = getDepartmentName(data.department || 'gynecology');
-    
+
     successDiv.innerHTML = `
         <div style="font-size: 3rem; margin-bottom: 1rem;">
             <i class="fas fa-check-circle"></i>
@@ -1032,16 +1032,16 @@ function showAppointmentConfirmation(appointmentId, data) {
             <i class="fas fa-sms"></i> SMS reminder will be sent to ${data.patientPhone || 'your phone'}
         </p>
     `;
-    
+
     // Insert at the beginning of the form
     form.insertBefore(successDiv, form.firstChild);
-    
+
     // Scroll to success message
     successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    
+
     // Scroll to success message
     successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    
+
     // Show notification
     showNotification('Appointment booked successfully!', 'success');
 }
@@ -1055,7 +1055,7 @@ function formatTime(time) {
 }
 
 // Set minimum date to today
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const dateInput = document.getElementById('appointmentDate');
     if (dateInput) {
         const today = new Date();
@@ -1070,11 +1070,11 @@ document.addEventListener('DOMContentLoaded', function() {
 //     const currentUser = sessionStorage.getItem('currentUser');
 //     if (currentUser) {
 //         const user = JSON.parse(currentUser);
-        
+
 //         const nameField = document.getElementById('patientName');
 //         const emailField = document.getElementById('patientEmail');
 //         const phoneField = document.getElementById('patientPhone');
-        
+
 //         if (nameField && user.name) nameField.value = user.name;
 //         if (emailField && user.email) emailField.value = user.email;
 //         if (phoneField && user.phone) phoneField.value = user.phone;
@@ -1096,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //     if (phoneField) phoneField.value = user.phone || ""; // 🔥 Auto fill phone
 // }
 
-    function prefillUserData() {
+function prefillUserData() {
     const user = JSON.parse(sessionStorage.getItem('currentUser') || "{}");
     if (!user) return;
 
@@ -1105,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('patientPhone').value = user.phone || "";
 
     console.log("Auto-filled:", user);
-    }
+}
 
 
 
@@ -1113,14 +1113,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // const originalOpenModal = openModal;
 // window.openModal = function(modalId) {
 //     originalOpenModal(modalId);
-    
+
 //     if (modalId === 'appointmentModal') {
 //         // Prefill user data if available
 //         setTimeout(prefillUserData, 100);
 //     }
 // };
 const originalOpenModal = openModal;
-window.openModal = function(modalId) {
+window.openModal = function (modalId) {
     originalOpenModal(modalId);
 
     if (modalId === 'appointmentModal') {

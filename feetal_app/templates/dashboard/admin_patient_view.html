@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@
             justify-content: center;
             padding: 2rem;
         }
+
         .detail-card {
             background: white;
             width: 100%;
@@ -24,30 +26,36 @@
             padding: 2.5rem;
             box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
         }
+
         .detail-card h1 {
             margin-bottom: 0.5rem;
             color: #0f172a;
         }
+
         .detail-card p {
             color: #475569;
             margin-bottom: 1.5rem;
         }
+
         .detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem 2rem;
         }
+
         .detail-label {
             font-size: 0.85rem;
             text-transform: uppercase;
             color: #94a3b8;
             letter-spacing: 0.05em;
         }
+
         .detail-value {
             font-size: 1.05rem;
             color: #1e293b;
             margin-bottom: 1rem;
         }
+
         .card-actions {
             margin-top: 2rem;
             display: flex;
@@ -55,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="detail-card">
         <h1>Patient Details</h1>
@@ -88,14 +97,15 @@
         </div>
 
         <div class="card-actions">
+            {% if user.is_superuser %}
             <a class="btn btn-secondary" href="{% url 'feetal_app:dashboard_admin' %}">Back to dashboard</a>
+            {% elif request.user.doctor_profile %}
+            <a class="btn btn-secondary" href="{% url 'feetal_app:dashboard_doctor' %}">Back to dashboard</a>
+            {% else %}
+            <a class="btn btn-secondary" href="{% url 'feetal_app:index' %}">Back Home</a>
+            {% endif %}
         </div>
     </div>
 </body>
+
 </html>
-
-
-
-
-
-

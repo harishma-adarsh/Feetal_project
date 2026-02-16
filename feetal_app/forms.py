@@ -49,7 +49,7 @@ class DoctorRegistrationForm(forms.Form):
     """Registration form for doctors."""
     name = forms.CharField(max_length=150, required=True, label="Full Name", widget=forms.TextInput(attrs={'placeholder': 'Dr. Jane Doe'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'doctor@example.com'}))
-    phone = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'placeholder': '+1 (555) 123-4567'}))
+    phone = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'placeholder': '+91 484 234 5678'}))
     specialization = forms.ChoiceField(choices=Doctor.SPECIALIZATION_CHOICES, required=True, widget=forms.Select(attrs={'placeholder': 'Select specialization'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Create a password'}), required=True, min_length=6)
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm password'}), required=True, label="Confirm Password")
@@ -138,7 +138,7 @@ class DoctorAdminForm(forms.ModelForm):
         model = Doctor
         fields = ['phone', 'specialization']
         widgets = {
-            'phone': forms.TextInput(attrs={'placeholder': '+1 (555) 123-4567'}),
+            'phone': forms.TextInput(attrs={'placeholder': '+91 484 234 5678'}),
         }
 
     def __init__(self, *args, **kwargs):

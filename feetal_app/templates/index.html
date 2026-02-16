@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -42,8 +44,8 @@
                         <i class="fas fa-chevron-down chevron"></i>
                     </button>
                     <ul id="callDropdown" class="dropdown-menu">
-                        <li><a href="tel:+15551234567">Emergency: +1 (555) 123‑4567</a></li>
-                        <li><a href="tel:+15559876543">Helpline: +1 (555) 987‑6543</a></li>
+                        <li><a href="tel:+914842345678">Emergency: +91 484 234 5678</a></li>
+                        <li><a href="tel:+919447012345">Helpline: +91 94470 12345</a></li>
                     </ul>
                 </li>
             </ul>
@@ -60,17 +62,18 @@
         <!-- Maternity Hero Image Background -->
         <div class="hero-video-container">
             <img class="hero-video"
-                 src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=1920&q=80"
-                 alt="Modern maternity operating room with surgical team">
+                src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=1920&q=80"
+                alt="Modern maternity operating room with surgical team">
             <div class="hero-overlay"></div>
         </div>
-        
+
         <!-- Hero Content -->
         <div class="hero-content">
             <div class="hero-container">
                 <div class="hero-text" data-aos="fade-up" data-aos-delay="200">
                     <h1>Excellence in Healthcare</h1>
-                    <p>Providing compassionate, comprehensive medical care with cutting-edge technology and experienced professionals dedicated to your well-being.</p>
+                    <p>Providing compassionate, comprehensive medical care with cutting-edge technology and experienced
+                        professionals dedicated to your well-being.</p>
                     <div class="hero-buttons">
                         <button class="btn-primary" onclick="scrollToSection('services')">
                             <span>Our Services</span>
@@ -82,7 +85,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Floating Stats Cards -->
                 <div class="hero-stats" data-aos="fade-up" data-aos-delay="400">
                     <div class="stat-card">
@@ -100,7 +103,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Scroll Indicator -->
         <!-- <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="600" onclick="scrollToSection('services')">
             <div class="scroll-arrow">
@@ -123,7 +126,8 @@
                         <i class="fas fa-female"></i>
                     </div>
                     <h3>Gynecology & Maternity</h3>
-                    <p>Comprehensive women's health and maternity care with AI-powered fetal monitoring and prediction services.</p>
+                    <p>Comprehensive women's health and maternity care with AI-powered fetal monitoring and prediction
+                        services.</p>
                     <button class="btn-service" onclick="redirectToMaternity()">Learn More</button>
                 </div>
                 <div class="service-card" data-aos="fade-up" data-aos-delay="200">
@@ -131,7 +135,8 @@
                         <i class="fas fa-baby"></i>
                     </div>
                     <h3>Prenatal Counselling</h3>
-                    <p>Warm, expert guidance that explains your scans and tests, reduces anxiety, and helps you feel calm and prepared for your baby.</p>
+                    <p>Warm, expert guidance that explains your scans and tests, reduces anxiety, and helps you feel
+                        calm and prepared for your baby.</p>
                     <div class="open-badge">Available</div>
                     <button class="btn-service" onclick="openModal('appointmentModal')">Book Counselling</button>
                 </div>
@@ -181,7 +186,8 @@
             <div class="about-content">
                 <div class="about-text" data-aos="fade-right">
                     <h2>Why Choose FetoScope?</h2>
-                    <p>With over 25 years of excellence in maternity care, FetoScope has been at the forefront of fetal health innovation, providing world-class monitoring with compassionate support.</p>
+                    <p>With over 25 years of excellence in maternity care, FetoScope has been at the forefront of fetal
+                        health innovation, providing world-class monitoring with compassionate support.</p>
                     <div class="stats">
                         <div class="stat-item">
                             <h3>25+</h3>
@@ -203,7 +209,8 @@
                     <button class="btn-primary">Learn More About Us</button>
                 </div>
                 <div class="about-image" data-aos="fade-left">
-                    <img src="{% static 'images/gynecologist_performing_ultrasound_consultation.jpg' %}" alt="Medical Team">
+                    <img src="{% static 'images/gynecologist_performing_ultrasound_consultation.jpg' %}"
+                        alt="Medical Team">
                 </div>
             </div>
         </div>
@@ -217,7 +224,7 @@
                 <p>Book your appointment today and experience excellence in healthcare</p>
                 <div class="cta-buttons">
                     <button class="btn-primary" onclick="openModal('appointmentModal')">Book Appointment</button>
-                    <button class="btn-secondary">Call: +1 (555) 123-4567</button>
+                    <button class="btn-secondary">Call: +91 484 234 5678</button>
                 </div>
             </div>
         </div>
@@ -253,7 +260,7 @@
                     <h3>Services</h3>
                     <ul>
                         <li><a href="#" onclick="redirectToMaternity()">Gynecology & Maternity</a></li>
-                        <li><a href="#" >Prenatal Counselling</a></li>
+                        <li><a href="#">Prenatal Counselling</a></li>
                         <li><span class="disabled-link">Cardiology <small>(Coming Soon)</small></span></li>
                         <li><span class="disabled-link">Neurology <small>(Coming Soon)</small></span></li>
                     </ul>
@@ -262,78 +269,80 @@
                     <h3>Staff Access</h3>
                     <ul>
                         <!-- <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-user-shield"></i> Staff Login</a></li> -->
-                        <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-user-md"></i> Doctor Portal</a></li>
-                        <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-cog"></i> Admin Panel</a></li>
+                        <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-user-md"></i> Doctor
+                                Portal</a></li>
+                        <li><a href="{% url 'feetal_app:dashboard_login' %}"><i class="fas fa-cog"></i> Admin Panel</a>
+                        </li>
                         <!-- <li><a href="#" onclick="openModal('doctorRegistrationModal'); return false;"><i class="fas fa-user-plus"></i> Doctor Registration</a></li> -->
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h3>Contact Info</h3>
                     <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> 123 Healthcare Ave, Medical City, MC 12345</p>
-                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-map-marker-alt"></i> FetoScope Hospital, MG Road, Kochi, Kerala, 682016</p>
+                        <p><i class="fas fa-phone"></i> +91 484 234 5678</p>
                         <p><i class="fas fa-envelope"></i> info@fetoscope.com</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 FetoScope. All rights reserved.</p>
+                <p>&copy; 2026 FetoScope. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-   <!-- Login Modal -->
-<!-- Login Modal -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Login to Your Account</h2>
-            <span class="close" onclick="closeModal('loginModal')">&times;</span>
-        </div>
-
-        <form class="auth-form" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" required placeholder="Enter your email">
+    <!-- Login Modal -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to Your Account</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
             </div>
 
-            <div class="form-group">
-                <label for="loginPassword">Password</label>
-
-                <!-- 🔹 Password with Eye Icon -->
-                <div class="password-wrapper" style="position: relative;">
-                    <input type="password" id="loginPassword" required placeholder="Enter your password" style="padding-right: 40px;">
-                    <i class="fas fa-eye" id="toggleLoginPassword" 
-                       style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-                              cursor: pointer; color:#6c6c6c;"></i>
+            <form class="auth-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email">
                 </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+
+                    <!-- 🔹 Password with Eye Icon -->
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="password" id="loginPassword" required placeholder="Enter your password"
+                            style="padding-right: 40px;">
+                        <i class="fas fa-eye" id="toggleLoginPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+                              cursor: pointer; color:#6c6c6c;"></i>
+                    </div>
+                </div>
+
+                <!-- 🔹 Forgot Password Link -->
+                <div style="text-align:right; margin: -6px 0 14px 0;">
+                    <a href="{% url 'feetal_app:forgot_password' %}"
+                        style="font-size: 14px; color:#0076d6; text-decoration:none;">
+                        Forgot Password?
+                    </a>
+                </div>
+
+                <button type="submit" class="btn-primary full-width">Login</button>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="#" onclick="switchModal('loginModal', 'registerModal')">Register here</a>
+                </p>
+            </form>
+
+            <div class="demo-credentials">
+                <h4>Demo Credentials:</h4>
+                <p><strong>Email:</strong> demo@fetoscope.com</p>
+                <p><strong>Password:</strong> demo123</p>
             </div>
-
-            <!-- 🔹 Forgot Password Link -->
-            <div style="text-align:right; margin: -6px 0 14px 0;">
-                <a href="{% url 'feetal_app:forgot_password' %}" 
-                   style="font-size: 14px; color:#0076d6; text-decoration:none;">
-                   Forgot Password?
-                </a>
-            </div>
-
-            <button type="submit" class="btn-primary full-width">Login</button>
-
-            <p class="auth-switch">
-                Don't have an account?
-                <a href="#" onclick="switchModal('loginModal', 'registerModal')">Register here</a>
-            </p>
-        </form>
-
-        <div class="demo-credentials">
-            <h4>Demo Credentials:</h4>
-            <p><strong>Email:</strong> demo@fetoscope.com</p>
-            <p><strong>Password:</strong> demo123</p>
         </div>
     </div>
-</div>
 
-      
+
 
 
     <!-- Register Modal -->
@@ -361,7 +370,8 @@
                     <input type="password" id="registerPassword" required placeholder="Create a password">
                 </div>
                 <button type="submit" class="btn-primary full-width">Register</button>
-                <p class="auth-switch">Already have an account? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Login here</a></p>
+                <p class="auth-switch">Already have an account? <a href="#"
+                        onclick="switchModal('registerModal', 'loginModal')">Login here</a></p>
             </form>
         </div>
     </div>
@@ -438,7 +448,7 @@
                         <input type="tel" id="patientPhone" required placeholder="Enter your phone number">
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="patientEmail">Email Address *</label>
@@ -512,14 +522,16 @@
 
                 <div class="form-group">
                     <label for="appointmentNotes">Additional Notes (Optional)</label>
-                    <textarea id="appointmentNotes" placeholder="Any specific concerns or information you'd like to share..." rows="3"></textarea>
+                    <textarea id="appointmentNotes"
+                        placeholder="Any specific concerns or information you'd like to share..." rows="3"></textarea>
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="appointmentTerms" required>
                         <span class="checkmark"></span>
-                        I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                        I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#"
+                            target="_blank">Privacy Policy</a>
                     </label>
                 </div>
 
@@ -540,4 +552,5 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="{% static 'js/index.js' %}"></script>
 </body>
+
 </html>

@@ -903,9 +903,9 @@ def admin_doctor_toggle_active(request, doctor_id):
 
 @login_required
 def admin_patient_view(request, patient_id):
-    if not request.user.is_superuser:
+    if not (request.user.is_superuser or hasattr(request.user, 'doctor_profile')):
         messages.error(
-            request, "Only the designated admin can view patients."
+            request, "Only the designated admin or doctors can view patients."
         )
         return redirect("feetal_app:index")
 
@@ -1633,9 +1633,15 @@ def combined_analysis_api(request):
         )
 
         try:
+            # Ensure directory exists (critical for Render)
+            report_dir = os.path.join(settings.MEDIA_ROOT, "analysis_reports")
+            os.makedirs(report_dir, exist_ok=True)
+            
             report.pdf.save(file_name, ContentFile(pdf_bytes))
             report.save()
-        except Exception:
+        except Exception as e:
+            if settings.DEBUG:
+                print(f"[ERROR] Failed to save PDF: {str(e)}")
             report.save()
 
         return JsonResponse(

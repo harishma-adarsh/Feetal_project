@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0a#fr(mzra%s%fm-r#w)cldeorgy+r*=cn!uke_bbsa)ed^xtp'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0a#fr(mzra%s%fm-r#w)cldeorgy+r*=cn!uke_bbsa)ed^xtp')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
@@ -38,6 +38,7 @@ if RENDER_EXTERNAL_HOSTNAME:
     ]
 else:
     ALLOWED_HOSTS = ['*']
+    CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
 
 
 
@@ -142,6 +143,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Increase upload size limit (default is 2.5MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -149,7 +154,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if os.name == 'nt':
+    TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    TESSERACT_CMD = "tesseract"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"

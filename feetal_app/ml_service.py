@@ -48,6 +48,11 @@ def load_preterm_delivery_model():
     global _preterm_delivery_model
     if _preterm_delivery_model is None:
         try:
+            # Optimize memory usage for Render Free Tier
+            import gc
+            gc.collect()
+            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
             from tensorflow import keras
             model_path = get_model_path("preterm_delivery_cnn.h5")
             
