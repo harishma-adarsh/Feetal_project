@@ -356,12 +356,12 @@ def dashboard_login(request):
             User = get_user_model()
             # allow login via email
             if "@" in identifier:
-                try:
-                    username = User.objects.get(
-                        email__iexact=identifier.strip()
-                    ).username
-                except User.DoesNotExist:
+                user_match = User.objects.filter(email__iexact=identifier.strip()).first()
+                if user_match:
+                    username = user_match.username
+                else:
                     username = identifier.strip()
+
 
             user = authenticate(request, username=username, password=password)
             if user is not None:

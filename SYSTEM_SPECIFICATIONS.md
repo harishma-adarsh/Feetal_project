@@ -1,3 +1,21 @@
+# PROJECT SPECIFICATION: FEETAL (FETOSCOPE)
+
+---
+
+## PROJECT REFERENCE & DOCUMENT DATA
+
+| Attribute | Details |
+| :--- | :--- |
+| **Project Name** | Feetal (FetoScope) |
+| **Project ID** | FEETAL-2026-v1 |
+| **Document Type** | System Specification & Data Architecture |
+| **Version** | 1.0.4 |
+| **Contact / Author** | Development Team (Maitexa) |
+| **Last Updated** | March 06, 2026 |
+| **Status** | Active / Under Development |
+
+---
+
 # 3. SYSTEM SPECIFICATIONS
 
 ## 3.1 HARDWARE SPECIFICATION
@@ -37,168 +55,205 @@
 
 The following tables represent the core data structure of the **Feetal** system.
 
-### 3.3.1 USER PROFILE TABLES
+### **<u>In memory data</u>**
 
-| Table Name | Columns | Description |
+#### **Table 1: LOGIN**
+| Field Name | Data Type | Constraints |
 | :--- | :--- | :--- |
-| **Patient** | `user_id` (FK), `phone`, `created_at`, `updated_at` | Stores detailed patient registration information. |
-| **Doctor** | `user_id` (FK), `phone`, `specialization`, `created_at`, `updated_at` | Stores professional details of registered doctors. |
+| Login_id | Int(11) | Primary key |
+| Username | Varchar(50) | Not null |
+| Password | Varchar(128) | Not null |
+| Email | Varchar(100) | Not null |
+| User_type | Varchar(30) | Not null |
 
-### 3.3.2 APPOINTMENT & SCHEDULE TABLES
-
-| Table Name | Columns | Description |
+#### **Table 2: DOCTOR**
+| Field Name | Data Type | Constraints |
 | :--- | :--- | :--- |
-| **Appointment** | `patient_id` (FK), `doctor_id` (FK), `patient_name`, `patient_email`, `patient_phone`, `patient_age`, `appointment_date`, `appointment_time`, `reason`, `notes`, `status` | Manages appointments between patients and doctors. |
-| **DoctorSchedule**| `doctor_id` (FK), `day`, `start_time`, `end_time` | Manages availability slots for doctors. |
+| Doctor_id | Int(11) | Primary key |
+| Login_id | Int(11) | Foreign key |
+| Phone | Varchar(20) | Not null |
+| Specialization | Varchar(50) | Not null |
+| Created_at | DateTime | Not null |
 
-### 3.3.3 ANALYSIS & REPORT TABLES
-
-| Table Name | Columns | Description |
+#### **Table 3: PATIENT**
+| Field Name | Data Type | Constraints |
 | :--- | :--- | :--- |
-| **AnalysisReport** | `patient_name`, `patient_email`, `combined_risk_level`, `pdf` (File), `created_at` | Stores generated PDF reports for patient analysis. |
-| **MLReport** | `patient_name`, `analysis_type`, `risk_level`, `confidence`, `findings`, `created_at` | Stores metadata and results of machine learning predictions. |
+| Patient_id | Int(11) | Primary key |
+| Login_id | Int(11) | Foreign key |
+| Phone | Varchar(20) | Not null |
+| Created_at | DateTime | Not null |
+
+#### **Table 4: APPOINTMENT**
+| Field Name | Data Type | Constraints |
+| :--- | :--- | :--- |
+| Appointment_id | Int(11) | Primary key |
+| Patient_id | Int(11) | Foreign key |
+| Doctor_id | Int(11) | Foreign key |
+| App_Date | Date | Not null |
+| App_Time | Time | Not null |
+| Status | Varchar(20) | Not null |
+
+#### **Table 5: ML_REPORT**
+| Field Name | Data Type | Constraints |
+| :--- | :--- | :--- |
+| Report_id | Int(11) | Primary key |
+| Patient_name | Varchar(255) | Not null |
+| Analysis_type | Varchar(50) | Not null |
+| Risk_level | Varchar(20) | Not null |
+| Confidence | Int(11) | Not null |
+
+#### **Table 6: DOCTOR_SCHEDULE**
+| Field Name | Data Type | Constraints |
+| :--- | :--- | :--- |
+| Schedule_id | Int(11) | Primary key |
+| Doctor_id | Int(11) | Foreign key |
+| Available_Day | Varchar(20) | Not null |
+| Start_Time | Time | Not null |
+| End_Time | Time | Not null |
+
+---
 
 ### 3.3.4 ENTITY RELATIONSHIP DIAGRAM (ERD)
 
 ```mermaid
 erDiagram
-    USER ||--|| Patient : "has profile"
-    USER ||--|| Doctor : "has profile"
+    LOGIN ||--|| Patient : "has profile"
+    LOGIN ||--|| Doctor : "has profile"
     Patient ||--o{ Appointment : "books"
     Doctor ||--o{ Appointment : "attends"
     Doctor ||--o{ DoctorSchedule : "manages"
 
+    LOGIN {
+        int login_id PK
+        string username
+        string user_type
+    }
+
     Patient {
-        ForeignKey user_id
-        String phone
-        DateTime created_at
+        int patient_id PK
+        int login_id FK
+        string phone
     }
 
     Doctor {
-        ForeignKey user_id
-        String phone
-        String specialization
-        DateTime created_at
+        int doctor_id PK
+        int login_id FK
+        string specialization
     }
 
     Appointment {
-        ForeignKey patient_id
-        ForeignKey doctor_id
-        String patient_name
-        Date appointment_date
-        Time appointment_time
-        String status
-    }
-
-    DoctorSchedule {
-        ForeignKey doctor_id
-        String day
-        Time start_time
-        Time end_time
-    }
-
-    AnalysisReport {
-        String patient_name
-        String risk_level
-        File pdf
-        DateTime created_at
-    }
-
-    MLReport {
-        String patient_name
-        String risk_level
-        Int confidence
-        DateTime created_at
+        int appointment_id PK
+        int patient_id FK
+        int doctor_id FK
+        date app_date
+        string status
     }
 ```
-
-![Entity Relationship Diagram (ERD)](file:///C:/Users/haris/.gemini/antigravity/brain/848e4473-9ab1-419a-9c48-f6d96631eddc/feetal_erd_diagram_1772610065570.png)
 
 ---
 
 ## 3.4 DATA FLOW DIAGRAM (DFD)
 
-The following diagrams illustrate the movement of data through the Feetal (FetoScope) system, from user input to AI-driven analysis and report generation.
+The following diagrams illustrate the movement of data through the Feetal (FetoScope) system across multiple administrative and functional levels.
 
 ### 3.4.1 LEVEL 0 DFD (CONTEXT DIAGRAM)
 The Context Diagram shows the system boundary and its interactions with external entities.
 
 ```mermaid
 graph LR
-    %% External Entities
     P[Patient]
     D[Doctor]
     A[Admin]
-
-    %% Main System Process
     S((FEETAL SYSTEM))
+    DB[(DATABASE)]
 
-    %% Data Flows
-    P -- "Personal Info, Health Metrics (BP, Heart Rate, BS)" --> S
-    P -- "Pregnancy History (Gestational Age, Previous Preterm)" --> S
+    P -- "Personal Info, Health Metrics" --> S
     S -- "Appointment Notifications" --> P
-
-    D -- "Consultation Availability, Doctor Profile" --> S
-    S -- "Patient Risk Analytics, Appointment Schedule" --> D
-    S -- "PDF Analysis Reports" --> D
-
+    D -- "Availability, Profile" --> S
+    S -- "Risk Analytics, PDF Reports" --> D
     A -- "User Credentials, System Config" --> S
-    S -- "User Activity Logs, System Analytics" --> A
+    S -- "Data Storage & Retrieval" --> DB
 ```
 
-![Level 0 DFD](file:///C:/Users/haris/.gemini/antigravity/brain/848e4473-9ab1-419a-9c48-f6d96631eddc/feetal_dfd_level_0_v4_final_1772611061810.png)
-
-### 3.4.2 LEVEL 1 DFD
-The Level 1 DFD decomposes the system into functional processes and identifies data stores.
+### 3.4.2 LEVEL 1 DFD (ADMIN LEVEL)
+Focuses on user management, system monitoring, and scheduling.
 
 ```mermaid
 graph TD
-    %% External Entities
-    Patient((Patient))
-    Doctor((Doctor))
-
-    %% Processes
-    P1[1.0 User Management & Auth]
-    P2[2.0 Health Data Processing]
-    P3[3.0 Risk Prediction Engine]
-    P4[4.0 Appointment Management]
-    P5[5.0 Report & Analytics Generation]
-
-    %% Data Stores
+    Admin[Administrator]
+    P1_1[1.1 Manage Doctor Profiles]
+    P1_2[1.2 Manage Patient Records]
+    P1_3[1.3 Set Clinic Schedules]
+    P1_4[1.4 Monitor System Logs]
     D1[(User Profiles DB)]
-    D2[(Medical Records DB)]
-    D3[(Appointment & Schedule DB)]
-    D4[(ML Prediction Cache)]
+    D3[(Schedules DB)]
 
-    %% Logic Flows for Process 1.0
-    Patient -- "Registration/Login Data" --> P1
-    Doctor -- "Login Credentials" --> P1
-    P1 <--> D1
-    P1 -- "User Context" --> P2
-
-    %% Logic Flows for Process 2.0
-    Patient -- "Input Vitals (BP, BS, BMI)" --> P2
-    P2 -- "Formatted Medical Data" --> D2
-    P2 -- "Raw Features" --> P3
-
-    %% Logic Flows for Process 3.0
-    P3 -- "Invoke Maternal Health model" --> D4
-    P3 -- "Invoke Preterm model" --> D4
-    D4 -- "Prediction Results" --> P5
-
-    %% Logic Flows for Process 4.0
-    Patient -- "Book Appointment" --> P4
-    Doctor -- "Set Availability" --> P4
-    P4 <--> D3
-    P4 -- "Status Alerts" --> Patient
-
-    %% Logic Flows for Process 5.0
-    D2 -- "Retrieve History" --> P5
-    P5 -- "Export PDF Report" --> Doctor
-    P5 -- "Patient Statistics" --> Doctor
+    Admin -- "Doctor Credentials" --> P1_1 <--> D1
+    Admin -- "Patient Verification" --> P1_2 <--> D1
+    Admin -- "Operating Hours" --> P1_3 <--> D3
+    P1_4 -- "Audit Trails" --> Admin
 ```
 
-![Level 1 DFD](file:///C:/Users/haris/.gemini/antigravity/brain/848e4473-9ab1-419a-9c48-f6d96631eddc/feetal_dfd_level_1_v2_1772610419896.png)
+### 3.4.3 LEVEL 2 DFD (DOCTOR LEVEL)
+Focuses on clinical review, report access, and consultation queue.
+
+```mermaid
+graph TD
+    Doctor[Doctor]
+    P2_1[2.1 Browse Patient List]
+    P2_2[2.2 View ML Risk Analytics]
+    P2_3[2.3 Download PDF Reports]
+    D2[(Medical Records DB)]
+    D4[(ML Prediction Cache)]
+
+    Doctor -- "Auth" --> P2_1
+    P2_1 -- "Fetch Records" --> D2
+    D4 -- "AI Results" --> P2_2 --> Doctor
+    D2 -- "PDF Files" --> P2_3 --> Doctor
+```
+
+### 3.4.4 LEVEL 3 DFD (PATIENT LEVEL)
+Focuses on data entry, registration, and booking.
+
+```mermaid
+graph TD
+    Patient[Patient]
+    P3_0[3.0 User Login]
+    P3_1[3.1 Registration]
+    P3_2[3.2 Input Vitals]
+    P3_3[3.3 Upload Images]
+    P3_4[3.4 Book Appointment]
+    D1[(User Profiles DB)]
+    D2[(Medical Records DB)]
+
+    Patient -- "Credentials" --> P3_0 <--> D1
+    Patient -- "Details" --> P3_1 --> D1
+    Patient -- "Vitals Data" --> P3_2 --> D2
+    Patient -- "USG Image" --> P3_3 --> D2
+    P3_4 -- "App Slot" --> Patient
+```
+
+### 3.4.5 LEVEL 4 DFD (ML FUNCTIONS)
+Detailed breakdown of the AI/ML Prediction Engine logic.
+
+```mermaid
+graph TD
+    HealthData[Vitals / Scan Image]
+    P4_1[4.1 OCR Extraction]
+    P4_2[4.2 Scaling & Normalization]
+    P4_3[4.3 Maternal Health Model]
+    P4_4[4.4 Preterm Delivery CNN]
+    P4_5[4.5 Risk Scoring Logic]
+    D4[(ML Prediction Cache)]
+
+    HealthData -- "Unstructured File" --> P4_1 --> P4_2
+    HealthData -- "Raw Vitals" --> P4_2
+    P4_2 -- "Vector" --> P4_3
+    P4_2 -- "Matrix" --> P4_4
+    P4_3 -- "Result A" --> P4_5
+    P4_4 -- "Result B" --> P4_5
+    P4_5 -- "Consolidated Risk" --> D4
+```
 
 ---
 
@@ -270,3 +325,50 @@ sequenceDiagram
 ```
 
 ---
+
+## 3.5 FUTURE ENHANCEMENTS
+
+The **Feetal (FetoScope)** system is designed for scalability and continuous improvement. The following enhancements are planned for future versions:
+
+### **1. Real-time IoT Integration**
+*   Directly connect wearable heart rate and blood pressure monitors for continuous, real-time vitals tracking.
+*   Automated notification system if vitals fall outside safe thresholds.
+
+### **2. Mobile Application (iOS & Android)**
+*   Develop a dedicated mobile app for patients to input vitals, receive notifications, and view their health history on the go.
+*   Push notifications for appointment reminders and medication alerts.
+
+### **3. Multi-language Support**
+*   Implement localization to support regional languages, making the platform accessible to a wider demographic of users.
+
+### **4. Blockchain for Data Privacy**
+*   Integration of blockchain technology to ensure the immutability and high-level security of sensitive maternal and fetal medical records.
+
+### **5. Telehealth & Video Consultation**
+*   Built-in video conferencing tool for remote consultations between doctors and patients, especially for high-risk cases that require frequent monitoring.
+
+### **6. Advanced Predictive Analytics**
+*   Expand AI models to predict potential complications beyond preterm delivery, such as gestational diabetes and pre-eclampsia, using longitudinal health data.
+
+### **7. Cloud-Native Scalability**
+*   Migrating the backend to a cloud-native architecture (e.g., AWS or Azure) to support high availability and faster data processing for a larger user base.
+
+---
+
+## 3.6 REFERENCES
+
+### **Technical Documentation**
+*   **Django Documentation:** [docs.djangoproject.com](https://docs.djangoproject.com/en/stable/) - For backend architecture and ORM management.
+*   **TensorFlow / Keras Documentation:** [tensorflow.org](https://www.tensorflow.org/guide) - For implementing and training the maternal health neural networks.
+*   **Mermaid.js Documentation:** [mermaid.js.org](https://mermaid.js.org/intro/) - Used for architecture diagram generation (DFD, ERD, Sequence Diagrams).
+*   **MySQL / SQLite Reference:** [dev.mysql.com/doc/](https://dev.mysql.com/doc/) - For database schema design and normalization.
+
+### **Medical & Research Standards**
+*   **WHO (World Health Organization):** Maternal health monitoring standards and preterm delivery risk factors. [who.int](https://www.who.int/health-topics/maternal-health)
+*   **ACOG (American College of Obstetricians and Gynecologists):** Clinical guidelines for pregnancy vitals and risk assessment. [acog.org](https://www.acog.org/)
+*   **Research Papers on Preterm Delivery:** Studies exploring CNN-based USG image analysis and OCR extraction for medical reports.
+
+### **Open Source Libraries**
+*   **Scikit-Learn:** For data preprocessing, scaling, and initial feature selection. [scikit-learn.org](https://scikit-learn.org/)
+*   **Pillow / OpenCV:** Used for USG image processing and manipulation. [python-pillow.org](https://python-pillow.org/)
+*   **ReportLab:** Python library used for generating the clinical PDF reports. [reportlab.com](https://www.reportlab.com/)
